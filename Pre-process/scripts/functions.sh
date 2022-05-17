@@ -8,6 +8,7 @@
 # e.g. create_folder "patient" 51449
 # e.g. create_folder "sample" SAMN17249432
 
+# create folder for the patient and samples (from first 2 columns of the csv input file)
 create_folder () {
     folders=($(ls))
     if [[ "${folders[@]}" =~ "${2}" ]]
@@ -50,6 +51,7 @@ download_sra () {
     cache-mgr -c ~/.sratoolkit.2.11.3-ubuntu64/cache/
 
     #gzip ./fastq/${1}*
+    # TODO: rename files based on read length
     for file in ./fastq/* ; do mv $file ${file//_/_R} ; done
 
 }
@@ -103,6 +105,7 @@ check_sra () {
 
 # Determine the technology used to exert the scRNA-Seq experiment. Now it recognize only 10x genomics experiments
 # No arguments needed
+# TODO: FIX function for different technologies
 determine_tech () {
     printf "Checking technology\n"
 
