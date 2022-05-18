@@ -1,5 +1,6 @@
 #!/home/jacopo/miniconda3/envs/seurat_env/bin/Rscript
 
+# TODO: improve docstring
 library(Seurat)
 library(SingleCellExperiment)
 library(stringr)
@@ -18,9 +19,7 @@ merge.data <- function(filepath,condition){
     # append Rds, labels and sample names
     for(i in 1:nrow(files)){
         rds = files[i,1]
-        #cat("RDS:",rds)
         labs = files[i,2]
-        #cat("labels:",labs)
         dats[i] = readRDS(rds) # Load Rds
         labels[[i]] = read.csv(file=(labs),sep="\t") # Load celltype labels
         samples[i] = str_extract(str_extract(files[i,1], "[^/]+$"), "[A-Z]+[0-9]+") # load sample name
