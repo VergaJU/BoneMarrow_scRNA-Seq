@@ -25,6 +25,7 @@ merge.data <- function(filepath,condition){
         labels[[i]] = read.csv(file=(labs),sep="\t") # Load celltype labels
         samples[i] = str_extract(str_extract(files[i,1], "[^/]+$"), "[A-Z]+[0-9]+") # load sample name
         dats[[i]] = AddMetaData(dats[[i]],labels[[i]])
+        dats[[i]]$orig.ident = samples[i]
     }
 
     # merge datas
