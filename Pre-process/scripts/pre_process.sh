@@ -10,15 +10,22 @@ exec > >(tee -ia main.LOG)
 source /home/jacopo/miniconda3/etc/profile.d/conda.sh
 
 
+# path for the reference index to obtain the counts (for kb)
 ref="/home/jacopo/Documents/PROJECT/MM/datasets/SRA_data/ref"
 
+# reference index (for kb)
 index=$ref/index.idx
+
+# reference transcripts to gene (for kb)
 t2g=$ref/t2g.txt
 
-
+# first argument for the csv files containing the samples, format:
+# patient_ID,sample_ID,entry(url or sra entry),tech(10xv2 or 10xv3)
 csv=${1}
+
+# run the pipeline
 while IFS=, read -r patient name entry tech; do
-    check_filetype ${entry}
+    check_filetype ${entry} # check if url for bam or sra entry
     printf "Processing sample $name\n"
     create_folder patient ${patient}
     create_folder sample ${name}
@@ -26,32 +33,32 @@ while IFS=, read -r patient name entry tech; do
     then
         printf "Sample already pre-processed!\n"
         cd ../../
-    elif [[ "$(find .)" =~ "fastq" ]]
+    elif [[ "$(find .)" =~ "fastq" ]] # check if fastq files are already present
     then
         if [[ "${filetype}" == "BAM" ]]
         then
-            check_bam
+            check_bam # if entry is bam file check if converted correctly
         elif [[ "${filetype}" == "SRA" ]]
         then
-            check_sra
+            check_sra # if entry is sra file check if converted correctly
         fi
 
         #determine_tech
-        get_counts $tech
+        get_counts $tech # get counts using kb
         cd ../../
     else
-        if  [[ "${filename}" == "BAM" ]]
+        if  [[ "${filename}" == "BAM" ]] # check if entry is bam or sra
         then
-            download_bam ${entry}
-            cellranger ${name}
-            check_bam
+            download_bam ${entry} # download the bam file (10x genomics)
+            cellranger ${name} # convert file in fastq files using cellranger
+            check_bam # check if converted correctly
         else
-            download_sra ${entry}
-            check_sra
+            download_sra ${entry} # if entry is sra, automatically download and convert file in fastq using fasterq-dump
+            check_sra # check if converted correctly
         fi
 
         #determine_tech
-        get_counts $tech
+        get_counts $tech # get counts using kb
         cd ../../
     fi
 done < "$csv" 
