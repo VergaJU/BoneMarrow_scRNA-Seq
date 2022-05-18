@@ -9,6 +9,12 @@
 # e.g. create_folder "sample" SAMN17249432
 
 # create folder for the patient and samples (from first 2 columns of the csv input file)
+## input:
+# 1- string: patient or sample
+# 2- string: entry (first or second column input csv)
+
+## output
+# working directory for the patient/sample
 create_folder () {
     folders=($(ls))
     if [[ "${folders[@]}" =~ "${2}" ]]
@@ -24,6 +30,8 @@ create_folder () {
 
 
 # check if the csv file contains links to download bam files or SRA entries
+## input: 3rd column of the csv file, SRA entry or url to download bam file
+## output: variable "filetype" for next steps
 check_filetype () {
     if [[ "${1}" =~ "https" ]]
     then
@@ -36,31 +44,27 @@ check_filetype () {
 
 
 # DOWNLOAD THE BAM FILE
-# Argument is the url (${url})
-
+## input: url (${url})
+## output: bam file
 download_bam () {
     printf "Downloading bam file...\n"
     wget -c ${1}
     filename=$(ls) # update filename
 }
 
-# Download the SRA file and gunzip it in order to be correctly processed in next steps
+# Download and convert SRA file with fasterq-dump
+## input: SRR entry
+## output: 3 fastq files (R1, R2, R3)
 download_sra () {
     printf "Downloading SRA file..\n";
-    fasterq-dump SRR12506863 -o SRR12506863 -O fastq/ -S --include-technical |& tee -a fasterq-dump.LOG
+    fasterq-dump ${1} -o ${1} -O fastq/ -S --include-technical |& tee -a fasterq-dump.LOG
     cache-mgr -c ~/.sratoolkit.2.11.3-ubuntu64/cache/
-
-    #gzip ./fastq/${1}*
-    # TODO: rename files based on read length
-    for file in ./fastq/* ; do mv $file ${file//_/_R} ; done
 
 }
 
 # Run cellranger to convert the bam file to fastq files, as input it takes the filename 
-# First argument: sample name (${name})
-# Then control if the conversion was done correctly, rename the fastq files with the sample ID
-# Move the files in the fastqs/ folder
-# Remove the other folders and bam files
+## Input: string, filename, bam file previously downloaded
+## Output: 3 fastq files
 
 cellranger () {
     printf "running CellRanger bamtofastq to obtain the fastq files\n"
@@ -74,6 +78,10 @@ cellranger () {
         |& tee -a bamtofastq.LOG
 }
 
+# Check if cellranger converted correctly the files
+# Move the files in the fastqs/ folder
+# Remove the other folders and bam files
+
 check_bam () {
     # Control the log file and reformat the output for forwarding analyses
     if [[ "$(tail -n1 bamtofastq.LOG)" =~ "Writing finished" ]]
@@ -82,7 +90,8 @@ check_bam () {
         fastqfiles=($(find ./fastq/ | grep bamto)) # store fastqfiles names and path
         for file in ${fastqfiles[@]};do
             suffix=$(echo ${file} | awk -F "/" '{print  $NF}' | cut -d "_" -f 2-) # save the suffix name
-            mv ${file} ./fastq/$name"_"$suffix # rename the files with the name given and move in fastq directory
+            mv ${file} ./fastq/$name"_"$suffix # rename the files with the name given in the csv file 
+                                               # and move in fastq directory
         done
         rm -fr ./fastq/*/* # remove empty folders
         rm -f *.bam* # remove bam file
@@ -93,10 +102,15 @@ check_bam () {
 }
 
 check_sra () {
-    # control fasterq-dump output and reformat the output for fowrarding analyses
+    # control fasterq-dump output and reformat the output for forwarding analyses
     if [[ "$(tail -n1 fasterq-dump.LOG)" =~ "reads written" ]]
     then
         printf "SRA file converted correctly\n"
+        # TODO: rename files based on read length
+        # rename files for next steps
+        # R1, R2, R3 fastqs to I1, R1, R2 fastqs
+        for file in ./fastq/* ; do mv $file ${file//_/_R} ; done
+
     else
         print "ERROR: File not downloaded correctly, EXITING\n"
         exit 1
@@ -105,13 +119,14 @@ check_sra () {
 
 # Determine the technology used to exert the scRNA-Seq experiment. Now it recognize only 10x genomics experiments
 # No arguments needed
+# Not used now, technology inputted in the csv file
 # TODO: FIX function for different technologies
 determine_tech () {
     printf "Checking technology\n"
 
-    fastqs=($(find . | grep _R[1-2] | sort))
+    fastqs=($(find . | grep _R[1-2] | sort)) # find fastq files of interest
 
-    echo ${fastqs[@]}
+    #echo ${fastqs[@]}
 
     # detect chemistry version by checking the length of the first 20 R1s and taking the floor of the average
     r1_len="$(zcat fastq/*R1* | head -80 | sed -n 2~4p | awk '{ print length }' | awk -F : '{sum+=$1} END {print sum/NR}' | cut -f1 -d".")"
@@ -128,30 +143,34 @@ determine_tech () {
 
 
 # Get the counts using the kb wrapper for kallisto|bustools.
-# Firstly activate the conda evironment, the environment need to bre created using the pre_process.yml file 
+# Firstly activate the conda evironment, the environment need to bre created using the pre_process.yml file
+# inputs: fastq files, index, t2g, technology
+# output: count matrices, unfiltered/filtered
 get_counts () {
     #activate conda env
     conda activate pre_process
 
-    fastqs=($(find . | grep _R[1-2] | sort))
+    fastqs=($(find . | grep _R[1-2] | sort))  # find fastq files of interest
 
     # run kallisto|bustools
     printf "running kb to obtain counts\n"
     kb count \
         --verbose \
-        -t 6 \
-        --cellranger \
-        -i $index \
-        -g $t2g \
-        -x 10xv3 \
-        -o ./kb_out \
-        ${fastqs[@]} \
+        -t 6 \ # number of threads
+        --cellranger \ # cellranger output
+        -i $index \ # index
+        -g $t2g \ # transcript to gene
+        -x $tech \ # technology
+        -o ./kb_out \ # output folder
+        ${fastqs[@]} \ # fastq files (R1, R2)
         --overwrite \
         |& tee -a kallisto.LOG 
 
-    if [[ "$(find kb_out) " =~ "cellranger" ]]
+    if [[ "$(find kb_out) " =~ "cellranger" ]] # check if counts obtained correctly
     then
-        # filter empty droplets
+        # filter empty droplets using EmptyDroplets, FDR<0.1
+        # filter doublets using scDblFinder
+        # output: folder with filtered cells
         printf "filtering empty droplets with FDR threshold of 0.1\n"
         ~/Documents/PROJECT/scripts_env/scripts/filter_empty_v2.R ./kb_out/counts_unfiltered/cellranger/ 0.1 \
         |& tee -a filter_empty.LOG
