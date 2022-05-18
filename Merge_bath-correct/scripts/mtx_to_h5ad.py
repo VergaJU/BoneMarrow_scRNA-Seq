@@ -4,7 +4,7 @@ import scanpy as sc
 import pandas as pd
 import sys
 
-adata = sc.read_10x_mtx("./temp/") # load data 
+adata = sc.read_10x_mtx("./temp/") # load data (10x matrix obtained with seurat_to_mtx.R)
 
 meta = pd.read_csv("./temp/metadata.tsv", sep = "\t") # load metadata
 
