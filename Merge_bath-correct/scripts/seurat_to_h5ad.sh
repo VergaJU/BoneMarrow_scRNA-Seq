@@ -1,10 +1,10 @@
 #!/usr/bin/bash
 
-file=$1 # input file
+file=$1 # input file, seurat object.rds
 
 mkdir temp # create temporary directory
 
-~/Documents/PROJECT/scripts_env/scripts/seurat_to_mtx.R $file  # convert in matrix
+~/Documents/PROJECT/scripts_env/scripts/seurat_to_mtx.R $file  # convert to 10x matrix
 
 mv ./temp/genes.tsv ./temp/old.tsv # mv genes in a new file
 
