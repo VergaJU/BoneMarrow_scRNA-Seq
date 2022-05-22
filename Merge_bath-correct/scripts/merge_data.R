@@ -43,7 +43,7 @@ merge.data <- function(filepath,condition){
     # convert to sce object
     merged.dat = as.SingleCellExperiment(merged.dat)
     # fix assay name and remove logcounts
-    assay(merged.dat, "RNA") <- assay(dat, "counts")
+    assay(merged.dat, "RNA") <- assay(merged.dat, "counts")
     assay(merged.dat, "counts") <- NULL
     assay(merged.dat, "logcounts") <- NULL
     # save sce object
