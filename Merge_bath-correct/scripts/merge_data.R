@@ -43,9 +43,9 @@ merge.data <- function(filepath,condition){
     # convert to sce object
     merged.dat = as.SingleCellExperiment(merged.dat)
     # fix assay name and remove logcounts
-    assay(dat, "RNA") <- assay(dat, "counts")
-    assay(dat, "counts") <- NULL
-    assay(dat, "logcounts") <- NULL
+    assay(merged.dat, "RNA") <- assay(dat, "counts")
+    assay(merged.dat, "counts") <- NULL
+    assay(merged.dat, "logcounts") <- NULL
     # save sce object
     saveRDS(merged.dat, file = paste0(condition, "_dataset_sce.Rds"))
 
