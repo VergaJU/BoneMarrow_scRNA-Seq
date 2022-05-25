@@ -1,4 +1,4 @@
-#!/usr/bin/nextflow
+!/usr/bin/nextflow
 
 ch_input = Channel.fromPath("data/*.h5ad").map{ it -> [it.baseName, it]}
 
@@ -14,6 +14,7 @@ latent_ch = Channel.value(latent_stage).flatten()
 
 // Cartesian product
 scvi_params = hvg_ch.combine(latent_ch)
+scanvi_params = hvg_ch.combine(latent_ch)
 
 process RUN_SCVI{
         publishDir "./data/scVI/latent"
@@ -29,8 +30,8 @@ process RUN_SCVI{
         """
         run_scvi.py\
                 --input_object ${database}\
-		        --output_prefix ${base}_${hvg}_${latent}\
-		        --batch_key ${params.batch_key}\
+                        --output_prefix ${base}_${hvg}_${latent}\
+                        --batch_key ${params.batch_key}\
                 --hvg ${hvg}\
                 --latent ${latent}
         """
@@ -52,8 +53,8 @@ process umap_SCVI{
                 --input_object ${datain}\
                 --output_prefix ${base}_${hvg}_${latent}_${knn}\
                 --knn $knn\
-		        --batch_key ${params.batch_key}\
-		        --celltype_key ${params.celltype_key}
+                        --batch_key ${params.batch_key}\
+                        --celltype_key ${params.celltype_key}
         """
 }
 
@@ -73,8 +74,8 @@ process eval_SCVI{
         eval.R\
                 --input_object ${datain}\
                 --output_prefix ${base}_${hvg}_${latent}_${knn}\
-		        --batch_key ${params.batch_key}\
-		        --celltype_key ${params.celltype_key}
+                        --batch_key ${params.batch_key}\
+                        --celltype_key ${params.celltype_key}
         """
 }
 
@@ -83,7 +84,7 @@ process RUN_SCANVI{
         tag "scVI $database $hvg hvgs $latent latent dims"
         
         input:
-        tuple val(base), file(database), val(hvg), val(latent) from ch_input.combine(scvi_params)
+        tuple val(base), file(database),i val(hvg), val(latent) from ch_anvi_input.combine(scanvi_params)
 
         output:
         set val(base), val(hvg), val(latent), file('*_scVI_latent.h5ad') into UMAPanvi
@@ -92,8 +93,8 @@ process RUN_SCANVI{
         """
         run_scvi.py\
                 --input_object ${database}\
-		        --output_prefix ${base}_${hvg}_${latent}\
-		        --batch_key ${params.batch_key}\
+                        --output_prefix ${base}_${hvg}_${latent}\
+                        --batch_key ${params.batch_key}\
                 --celltype_key ${params.celltype_key}\
                 --hvg ${hvg}\
                 --latent ${latent}
@@ -105,7 +106,7 @@ process umap_SCANVI{
         tag "umap $datain"
         
         input:
-        set val(knn), val(base), val(hvg), val(latent), file(datain) from knn_ch.combine(UMAPanvi)
+        set val(knn), val(base), val(hvg), val(latent), file(datain) from knn_anvi_ch.combine(UMAPanvi)
 
         output:
         set val(base), val(hvg), val(latent), val(knn), file('*.csv') into EVALanvi
@@ -116,12 +117,12 @@ process umap_SCANVI{
                 --input_object ${datain}\
                 --output_prefix ${base}_${hvg}_${latent}_${knn}\
                 --knn $knn\
-		        --batch_key ${params.batch_key}\
-		        --celltype_key ${params.celltype_key}
+                        --batch_key ${params.batch_key}\
+                        --celltype_key ${params.celltype_key}
         """
 }
 
-process eval_SCVI{
+process eval_SCANVI{
         publishDir "./data/scVI/eval"
         tag "eval $datain"
         
@@ -137,7 +138,7 @@ process eval_SCVI{
         eval.R\
                 --input_object ${datain}\
                 --output_prefix ${base}_${hvg}_${latent}_${knn}\
-		        --batch_key ${params.batch_key}\
-		        --celltype_key ${params.celltype_key}
+                        --batch_key ${params.batch_key}\
+                        --celltype_key ${params.celltype_key}
         """
 }
