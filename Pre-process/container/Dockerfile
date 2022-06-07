@@ -1,4 +1,5 @@
-FROM r-base:4.0.0
+FROM ubuntu:18.04 
+# https://hub.docker.com/_/ubuntu
 # Basic libraries
 RUN apt-get update --fix-missing && apt-get install -y apt-utils procps wget bzip2 ca-certificates libglib2.0-0 libxext6 libsm6 libxrender1 git mercurial subversion build-essential libcurl4-gnutls-dev libssl-dev libxml2-dev libhdf5-dev graphviz
 
