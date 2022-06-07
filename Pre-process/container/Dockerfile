@@ -23,4 +23,4 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py38_4.12.0-Linu
     echo "conda activate base" >> ~/.bashrc
 
 ADD pre_process.yml .
-RUN conda env create -f pre-process.yml
+RUN conda env create -f pre_process.yml
