@@ -8,10 +8,10 @@ ADD .cellranger-6.1.2 ./.cellranger-6.1.2/
 ENV PATH=$HOME/.cellranger-6.1.2:$PATH
 
 #Download and install SraToolkit
-RUN wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.4.1/sratoolkit.2.4.1-ubuntu64.tar.gz
+RUN wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.11.3/sratoolkit.2.11.3-ubuntu64.tar.gz
 # Unzip the archive
-RUN tar xzvf sratoolkit.2.4.1-ubuntu64.tar.gz
-ENV PATH=$HOME/sratoolkit.2.4.1-ubuntu64/bin:$PATH
+RUN tar xzvf sratoolkit.2.11.3-ubuntu64.tar.gz
+ENV PATH=$HOME/sratoolkit.2.11.3-ubuntu64/bin:$PATH
 
 # Miniconda
 ENV PATH /opt/conda/bin:$PATH
