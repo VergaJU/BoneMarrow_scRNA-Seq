@@ -13,6 +13,9 @@ RUN wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.11.3/sratoolkit.2.11.3-ubu
 # Unzip the archive
 RUN tar xzvf sratoolkit.2.11.3-ubuntu64.tar.gz
 ENV PATH=$HOME/sratoolkit.2.11.3-ubuntu64/bin:$PATH
+RUN vdb-config --restore-defaults
+RUN rm -f /root/.ncbi/user-settings.mkfg
+ADD user-settings.mkfg /root/.ncbi/user-settings.mkfg
 
 # Miniconda
 ENV PATH /opt/conda/bin:$PATH
