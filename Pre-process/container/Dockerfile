@@ -5,13 +5,13 @@ RUN apt-get update --fix-missing && apt-get install -y apt-utils procps wget bzi
 
 # Download and add in the path CellRanger
 ADD .cellranger-6.1.2 ./.cellranger-6.1.2/
-ENV PATH=$HOME/cellranger-6.1.2:$PATH
+ENV PATH=$HOME/.cellranger-6.1.2:$PATH
 
 #Download and install SraToolkit
 RUN wget http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.4.1/sratoolkit.2.4.1-ubuntu64.tar.gz
 # Unzip the archive
 RUN tar xzvf sratoolkit.2.4.1-ubuntu64.tar.gz
-ENV PATH=$HOME/directory/sratoolkit.2.4.1-ubuntu64/bin:$PATH
+ENV PATH=$HOME/sratoolkit.2.4.1-ubuntu64/bin:$PATH
 
 # Miniconda
 ENV PATH /opt/conda/bin:$PATH
