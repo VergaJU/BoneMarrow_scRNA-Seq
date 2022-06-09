@@ -1,4 +1,4 @@
-#! /home/jacopo/miniconda3/envs/pre_process/bin/Rscript
+#!/opt/conda/envs/pre_process/bin/Rscript
 
 library(tidyverse, quietly=T) # packages for data wrangling, visualization etc
 library(DropletUtils, quietly=T)
@@ -8,7 +8,6 @@ library(tools, quietly = T)
 library(R.utils, quietly = T)
 
 set.seed(1) # set seed to increase reproducibility
-#setwd("~/Documents/PROJECT/MM/datasets/SRA_data/PRJNA694128/25183/SAMN17249432/kb_out/counts_unfiltered/")
 
 
 # save arguments in a vector
