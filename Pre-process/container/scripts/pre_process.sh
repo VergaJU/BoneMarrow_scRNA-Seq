@@ -1,7 +1,7 @@
 #! /bin/bash
 
 
-source /scripts/functions.sh # source the files with functions
+source /usr/local/bin/functions.sh # source the files with functions
 
 # Redirect stdout ( > ) into a named pipe ( >() ) running "tee"
 exec > >(tee -ia main.LOG)
@@ -11,7 +11,7 @@ source /opt/conda/etc/profile.d/conda.sh
 
 
 # path for the reference index to obtain the counts (for kb)
-ref="/ref"
+ref="/lib/ref"
 
 # reference index (for kb)
 index=$ref/index.idx
