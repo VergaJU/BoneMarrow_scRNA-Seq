@@ -1,4 +1,4 @@
-#! /usr/bin/bash
+#! /bin/bash
 
 
 source /scripts/functions.sh # source the files with functions
@@ -7,7 +7,7 @@ source /scripts/functions.sh # source the files with functions
 exec > >(tee -ia main.LOG)
 
 # source conda commands
-source /miniconda3/etc/profile.d/conda.sh
+source /opt/conda/etc/profile.d/conda.sh
 
 
 # path for the reference index to obtain the counts (for kb)
