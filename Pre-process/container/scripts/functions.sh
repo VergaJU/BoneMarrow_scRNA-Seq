@@ -155,7 +155,7 @@ determine_tech () {
 # output: count matrices, unfiltered/filtered
 get_counts () {
     #activate conda env
-    conda activate pre_process
+    #conda activate pre_process
 
     fastqs=($(find . | grep _R[1-2] | sort))  # find fastq files of interest
 
@@ -169,7 +169,7 @@ get_counts () {
         -g $t2g \ # transcript to gene
         -x $tech \ # technology
         -o ./kb_out \ # output folder
-        ${fastqs[@]} \ # fastq files (R1, R2)
+        ${fastqs[@]} \ # fastq files
         --overwrite \
         |& tee -a kallisto.LOG 
 
