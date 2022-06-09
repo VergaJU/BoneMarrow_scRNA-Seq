@@ -109,7 +109,16 @@ check_sra () {
         # TODO: rename files based on read length
         # rename files for next steps
         # R1, R2, R3 fastqs to I1, R1, R2 fastqs
-        for file in ./fastq/* ; do mv $file ${file//_/_R} ; done
+        for file in ./fastq/* ; do
+        len="$(cat ${file} | head -80 | sed -n 2~4p | awk '{ print length }' | awk -F : '{sum+=$1} END {print sum/NR}' | cut -f1 -d".")";
+            if [[ $len -lt 26 ]]; then
+            mv $file ${file%_*.fastq}_I1.fastq
+            elif [[ $len -eq 26 || $len -eq 28 ]]; then
+            mv $file ${file%_*.fastq}_R1.fastq
+            elif [[ $len -gt 26 && $len -gt 28 ]]; then
+            mv $file ${file%_*.fastq}_R2.fastq           
+            fi
+        done
 
     else
         print "ERROR: File not downloaded correctly, EXITING\n"
@@ -129,7 +138,7 @@ determine_tech () {
     #echo ${fastqs[@]}
 
     # detect chemistry version by checking the length of the first 20 R1s and taking the floor of the average
-    r1_len="$(zcat fastq/*R1* | head -80 | sed -n 2~4p | awk '{ print length }' | awk -F : '{sum+=$1} END {print sum/NR}' | cut -f1 -d".")"
+    r1_len="$(cat fastq/*1* | head -80 | sed -n 2~4p | awk '{ print length }' | awk -F : '{sum+=$1} END {print sum/NR}' | cut -f1 -d".")"
     if [[ $r1_len =~ 28 ]]
     then
         tech="10xv3"
