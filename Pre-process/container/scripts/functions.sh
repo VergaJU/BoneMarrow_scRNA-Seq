@@ -69,13 +69,7 @@ download_sra () {
 cellranger () {
     printf "running CellRanger bamtofastq to obtain the fastq files\n"
     ## Use cellranger to get the fastq files
-    ~/.cellranger-6.1.2/lib/bin/bamtofastq \
-        --nthreads=6 \
-        --reads-per-fastq=100000000000 \
-        --traceback \
-        ${filename} \
-        ./fastq/ \
-        |& tee -a bamtofastq.LOG
+    cellranger-6.1.2/lib/bin/bamtofastq --nthreads=6 --reads-per-fastq=100000000000 --traceback ${filename} ./fastq/ |& tee -a bamtofastq.LOG
 }
 
 # Check if cellranger converted correctly the files
@@ -155,23 +149,19 @@ determine_tech () {
 # output: count matrices, unfiltered/filtered
 get_counts () {
     #activate conda env
-    #conda activate pre_process
+    conda activate pre_process
 
     fastqs=($(find . | grep _R[1-2] | sort))  # find fastq files of interest
 
     # run kallisto|bustools
+    # -t number of threads
+    #  --cellranger cellranger output
+    # -i index
+    # -g t2g
+    # -x technology
+    # -o output
     printf "running kb to obtain counts\n"
-    kb count \
-        --verbose \
-        -t 6 \ # number of threads
-        --cellranger \ # cellranger output
-        -i $index \ # index
-        -g $t2g \ # transcript to gene
-        -x $tech \ # technology
-        -o ./kb_out \ # output folder
-        ${fastqs[@]} \ # fastq files
-        --overwrite \
-        |& tee -a kallisto.LOG 
+    kb count --verbose -t 6 --cellranger -i $index -g $t2g -x $tech -o ./kb_out ${fastqs[@]} --overwrite |& tee -a kallisto.LOG 
 
     if [[ "$(find kb_out) " =~ "cellranger" ]] # check if counts obtained correctly
     then
@@ -179,8 +169,7 @@ get_counts () {
         # filter doublets using scDblFinder
         # output: folder with filtered cells
         printf "filtering empty droplets with FDR threshold of 0.1\n"
-        /scripts/filter_empty_v2.R ./kb_out/counts_unfiltered/cellranger/ 0.1 \
-        |& tee -a filter_empty.LOG
+        /usr/local/bin/filter_empty_v2.R ./kb_out/counts_unfiltered/cellranger/ 0.1 |& tee -a filter_empty.LOG
     else
         printf "ERROR: kallisto|bustool failed obtaining the counts. EXITING"
         exit 1
