@@ -16,6 +16,7 @@ ENV PATH=$HOME/sratoolkit.2.11.3-ubuntu64/bin:$PATH
 RUN vdb-config --restore-defaults
 RUN rm -f /root/.ncbi/user-settings.mkfg
 ADD user-settings.mkfg /root/.ncbi/user-settings.mkfg
+RUN rm -f sratoolkit.2.11.3-ubuntu64.tar.gz
 
 
 # create conda environment
