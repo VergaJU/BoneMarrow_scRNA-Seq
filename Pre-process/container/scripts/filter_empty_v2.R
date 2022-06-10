@@ -53,6 +53,8 @@ m <- Matrix::readMM(paste0(filepath, "/matrix.mtx")) # load matrix
 genes  <- read.csv(paste0(filepath, genes.file), sep = "\t", header = F)# attach genes
 rownames(m) <- genes[,2]
 colnames(m) <- read.csv(paste0(filepath, "/barcodes.tsv"), sep = "\t", header = F)[,1] # attach barcodes
+cols = colSums(m) > 10 #create vector of cells with more than 10 counts
+ m <- m[,cols] # remove cells with extremely low counts to avoid errors in scDblFinder
 empty <- emptyDrops(m) # compute the probability of empty droplets
 full <- empty$FDR <= args[2] # filter by selected FDR threshold
 full[is.na(full)] <- FALSE # remove NAs
