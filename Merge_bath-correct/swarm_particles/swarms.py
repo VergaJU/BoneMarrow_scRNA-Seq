@@ -1,3 +1,4 @@
+#!/home/jacopo/miniconda3/envs/swarms/bin/python3
 import pandas as pd
 import numpy as np
 import scanpy as sc
@@ -7,6 +8,7 @@ import sys
 
 inputfile = sys.argv[1]
 outputfile = inputfile[:-5] + "_clustered.h5ad"
+outputfile2 = inputfile[:-5] + "_new_clustered.h5ad"
 
 # Read file
 adata = sc.read(inputfile)
