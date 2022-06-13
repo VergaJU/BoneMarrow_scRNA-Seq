@@ -1,0 +1,10 @@
+name: swarms
+channels:
+  - anaconda
+  - bioconda
+  - conda-forge
+dependencies:
+  - python
+  - scanpy
+  - r-base
+  - bioconductor-zellkonverter
