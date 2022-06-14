@@ -49,6 +49,7 @@ merge.data <- function(filepath,condition,batch){
     # create variables
     dats = list()
     samples = vector()
+    cat("Merging", length(files[,1]), "files\nBatch key:", batch, "\n")
 
     # append Rds, labels and sample names
     for(i in 1:nrow(files)){
