@@ -5,3 +5,5 @@ Pre-process/container/ref
 Pre-process/container/samples.csv
 Merge_bath-correct/swarm_particles/SMM*
 Merge_bath-correct/swarm_particles/.envs
+Merge_bath-correct/scripts/.vscode/*
+Merge_bath-correct/swarm_particles/.vscode/*
