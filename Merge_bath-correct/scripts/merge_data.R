@@ -4,18 +4,46 @@
 library(Seurat)
 library(SingleCellExperiment)
 library(stringr)
+library(optparse)
 
- # tsv file containing paths to the files to be merged and cell labels obtained with stringR
- # path/to/file path/to/labels
+
+# tsv file containing paths to the files to be merged and cell labels obtained with stringR
+# path/to/file path/to/labels
 file_list <- commandArgs(trailingOnly = TRUE)[1]
 # condition to rename the merged file (string)
 condition_name <- commandArgs(trailingOnly = TRUE)[2] 
+
+option_list = list(
+  make_option(
+    c("-i", "--input_file"),
+    action = "store",
+    default = NA,
+    type = 'character',
+    help = 'Path to input file, it must be a file containing the paths for the files to be merged.'
+  ),
+  make_option(
+    c("-o", "--output_prefix"),
+    action = "store",
+    default = NA,
+    type = 'character',
+    help = 'Prefix for naming output file.'
+  ),
+  make_option(
+    c("-b", "--batch_key"),
+    action = "store",
+    default = "batch",
+    type = 'character',
+    help = 'Variable where to store the batch names.'
+  )
+)
+
+opt <- parse_args(OptionParser(option_list=option_list))
 
 
 # merge data inputted
 ## input list of files and condition
 ## output: seurat and sce objects named as condition
-merge.data <- function(filepath,condition){
+merge.data <- function(filepath,condition,batch){
     # Load file paths
     files <- read.csv(filepath, sep = "\t", header=F)
     # create variables
@@ -48,4 +76,4 @@ merge.data <- function(filepath,condition){
 }
 
 
-merge.data(file_list, condition_name)
+merge.data(opt$input_file, opt$output_prefix, opt$batch)
