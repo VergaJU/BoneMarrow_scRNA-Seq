@@ -21,6 +21,11 @@ sc.pp.filter_genes(adata, min_cells = 3)
 # normalize data
 sc.pp.normalize_total(adata, target_sum=1e4)
 
+
+# new matrix used to be modified by birds
+adata_norm = adata.X
+
+
 # Run UMAP and clustering as reference
 sc.pp.log1p(adata)
 sc.pp.highly_variable_genes(adata, min_mean=0.0125, max_mean=3, min_disp=0.5)
@@ -30,8 +35,6 @@ sc.tl.umap(adata)
 sc.tl.leiden(adata)
 adata.write(outputfile)
 
-# new matrix used to be modified by birds
-adata_norm = adata.X
 
 # convert to dense matrix
 adata_norm = adata_norm.toarray()
@@ -40,10 +43,10 @@ adata_norm = adata_norm.toarray()
 rows = adata_norm.shape[0]
 cols = adata_norm.shape[1]
 
-random_matrix = np.random.rand(rows,cols)
+random_matrix = np.random.rand(2,cols)
 
 # add matrices
-new_matrix = np.add(adata_norm,random_matrix)
+new_matrix = np.matmul(adata_norm,random_matrix)
 
 # new anndata
 new_adata = sc.AnnData(new_matrix)#, dtype=X.dtype)
