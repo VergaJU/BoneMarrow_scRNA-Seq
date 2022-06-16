@@ -27,5 +27,3 @@ dev.off()
 
 saveRDS(pred, file = paste0(opt$output_name, ".Rds"))
 write.table(df, file = paste0(opt$output_name, '_cell_labels.csv'), sep = '\t', row.names = T, col.names = T, quote = F)
-
-##TODO: add UMAP representation of celltypes
