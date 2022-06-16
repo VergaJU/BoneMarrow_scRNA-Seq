@@ -30,7 +30,7 @@ opt <- parse_args(OptionParser(option_list=option_list))
 
 sc <- import("scanpy")
 
-atlas.data <- sc$read_h5ad(opt$input_file)
+adata <- sc$read_h5ad(opt$input_file)
 
 counts <- t(adata$X)
 colnames(counts) <-  adata$obs_names$to_list()
