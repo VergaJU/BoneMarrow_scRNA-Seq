@@ -21,7 +21,7 @@ dat <- AddMetaData(dat, df)
 
 plot <- DimPlot(dat, reduction="umap",group.by="label", label=T, pt.size=.1,raster=F)
 plot <- plot + NoLegend()
-svg(str_replace(input_file, ".Rds", "UMAP_label.svg"))
+svg(str_replace(input_file, ".Rds", "_UMAP_label.svg"))
 print(plot)
 dev.off()
 
