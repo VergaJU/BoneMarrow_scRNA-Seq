@@ -20,6 +20,6 @@ RUN pip3 install -r requirements.txt
 
 # Install R packages
 
-RUN Rscript -e 'install.packages(c("tidyverse", "scPOP"))'
+RUN Rscript -e 'install.packages(c("tidyverse", "scPOP", "optparse"))'
 
 RUN chmod -R o+rX /opt/conda/lib/python3.8/site-packages/*
