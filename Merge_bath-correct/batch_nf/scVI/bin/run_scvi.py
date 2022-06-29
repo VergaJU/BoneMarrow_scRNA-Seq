@@ -9,6 +9,8 @@ from scarches.dataset.trvae.data_handling import remove_sparsity
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import anndata
+import scipy
 
 # read in parameters
 parser = argparse.ArgumentParser(description='Input/Output files and method parameters')
@@ -56,6 +58,15 @@ early_stopping_kwargs = {
 
 # read in data 
 adata = sc.read(args.input_object)
+
+# convert the sparse matrix from csc to csr to speed up the training
+matrix = adata.X
+matrix = scipy.sparse.csr_matrix(matrix)
+adata_csr = anndata.AnnData(matrix_csr)
+adata_csr.obs = adata.obs
+adata_csr.var = adata.var
+adata_csr.obsm = adata.obsm
+adata = adata_csr
 
 # subset to variable genes
 sc.pp.log1p(adata) # copute log
