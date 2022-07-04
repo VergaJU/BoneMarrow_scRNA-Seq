@@ -3,8 +3,8 @@ library(SingleCellExperiment)
 library(SingleR)
 library(stringr)
 
-dat <- readRDS(opt$input_file)
-ref <- readRDS(opt$ref)
+dat <- readRDS(commandArgs(trailingOnly = TRUE)[1])
+ref <- readRDS(commandArgs(trailingOnly = TRUE)[1])
 
 dat1 <- as.SingleCellExperiment(dat)
 ref <- as.SingleCellExperiment(ref)
