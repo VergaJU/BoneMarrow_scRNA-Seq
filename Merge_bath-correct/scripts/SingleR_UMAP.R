@@ -20,9 +20,9 @@ rownames(df) <- rownames(pred)
 
 dat <- AddMetaData(dat, df)
 
-plot <- DimPlot(dat, reduction="umap",group.by="label", label=T, pt.size=.1,raster=F)
+plot <- DimPlot(dat, reduction="umap",group.by="label", label=T, pt.size=.1,raster=T)
 plot <- plot + NoLegend()
-svg(str_replace(dat, ".Rds", "_UMAP_label.svg"))
+png(str_replace(dat, ".Rds", "_UMAP_label.png"))
 print(plot)
 dev.off()
 
