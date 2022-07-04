@@ -5,7 +5,7 @@ library(SingleR)
 library(stringr)
 
 dat <- readRDS(commandArgs(trailingOnly = TRUE)[1])
-ref <- readRDS(commandArgs(trailingOnly = TRUE)[1])
+ref <- readRDS(commandArgs(trailingOnly = TRUE)[2])
 
 #dat1 <- as.SingleCellExperiment(dat)
 #ref <- as.SingleCellExperiment(ref)
