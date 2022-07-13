@@ -8,7 +8,6 @@ dependencies:
   - _openmp_mutex=4.5=1_gnu
   - _r-mutex=1.0.1=anacondar_1
   - alabaster=0.7.12=py_0
-  - anndata=0.7.8=py38h578d9bd_1
   - anndata2ri=1.0.6=py_0
   - anyio=3.5.0=py38h578d9bd_0
   - argon2-cffi=21.3.0=pyhd8ed1ab_0
@@ -409,4 +408,7 @@ dependencies:
   - zipp=3.7.0=pyhd8ed1ab_0
   - zlib=1.2.11=h36c2ea0_1013
   - zstd=1.5.2=ha95c52a_0
+  - pip:
+    - anndata==0.8.0
+    - xlrd==1.2.0
 prefix: /home/jacopo/miniconda3/envs/scanpy_env
