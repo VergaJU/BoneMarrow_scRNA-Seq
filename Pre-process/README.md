@@ -19,11 +19,11 @@ docker push vergaju/pre-process:v5
 ```
 
 The container contains the seguent softwares:
-- sratoolkit (ver)
-- cellranger (ver)
-- DropletUtils (ver)
-- Seurat (ver)
-- Scanpy(?)
+- sratoolkit (2.11.3)
+- cellranger (6.1.2)
+- DropletUtils (1.14.0)
+- scDblFinder (1.8.0)
+
 
 The usage is:
 ```
