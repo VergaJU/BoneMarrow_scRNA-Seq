@@ -7,7 +7,7 @@ The project is focused on the creation of a new collection of scRNA-Seq studies 
 To made the studies comparable I decided to pre-process all the files from raw files (fastq/bam/sra), from the alignment to the batch-correction and cell type identification.
 
 The repo is organised in:
-- Pre processing
-- Quality control
-- Merging/Batch correction
+- [Pre processing](./Pre-process)
+- [Quality control](./Quality-control)
+- [Merging/Batch correction](./Merge_bath-correct)
 - Cell Identification
