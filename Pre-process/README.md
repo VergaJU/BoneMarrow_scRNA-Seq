@@ -1,0 +1,19 @@
+# Pre processing
+
+The pre processing consist on:
+- Data retrieval:
+    - sratoolkit fasterq-dump for sra entries
+    - wget for bam entries
+- Conversion of the files in fastq format:
+    - sratoolkit fasterq-dump for sra entries
+    - cellranger for bam files
+- Pseudoalignment and counts using kallisto|bustools
+- Empty droplets filtration with EmptyDrops
+- Doublets removal using scDblFinder
+
+All the pipeline is organised in a Docker container to ensure reproducibility and portability of it, the container is available [here](https://hub.docker.com/repository/docker/vergaju/pre-process).
+
+To obtain the latest version of it run:
+```
+docker push vergaju/pre-process:tagname
+```
