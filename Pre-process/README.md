@@ -15,5 +15,19 @@ All the pipeline is organised in a Docker container to ensure reproducibility an
 
 To obtain the latest version of it run:
 ```
-docker push vergaju/pre-process:tagname
+docker push vergaju/pre-process:v5
 ```
+
+The container contains the seguent softwares:
+- sratoolkit (ver)
+- cellranger (ver)
+- DropletUtils (ver)
+- Seurat (ver)
+- Scanpy(?)
+
+The usage is:
+```
+docker run <input file>
+```
+
+The input file is a csv files organised as follow:
