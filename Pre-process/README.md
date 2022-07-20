@@ -19,15 +19,20 @@ docker push vergaju/pre-process:v5
 ```
 
 The container contains the seguent softwares:
+- kallisto|bustools python wrapper (0.27.0)
 - sratoolkit (2.11.3)
 - cellranger (6.1.2)
 - DropletUtils (1.14.0)
 - scDblFinder (1.8.0)
 
+The index is the built-in from kallisto (from Jan 2020).
 
 The usage is:
+TODO: add command to run it 
 ```
 docker run <input file>
 ```
 
 The input file is a csv files organised as follow:
+
+TODO: Add csv example
