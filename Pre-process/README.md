@@ -28,11 +28,28 @@ The container contains the seguent softwares:
 The index is the built-in from kallisto (from Jan 2020).
 
 The usage is:
-TODO: add command to run it 
 ```
-docker run <input file>
+docker run pre-process <csv file>
 ```
 
 The input file is a csv files organised as follow:
+- patient or experiment
+- name of the run
+- entry of the run
+- technology
 
-TODO: Add csv example
+example:
+
+```
+SAMN18822752,SRR14295357,SRR14295357,10xv3
+SAMN18822743,SRR14295358,SRR14295358,10xv3
+SAMN18822742,SRR14295359,SRR14295359,10xv3
+SAMN18822751,SRR14295360,SRR14295360,10xv3
+SAMN18822750,SRR14295361,SRR14295361,10xv3
+SAMN18822749,SRR14295362,SRR14295362,10xv3
+SAMN18822748,SRR14295363,SRR14295363,10xv3
+```
+
+Headers aren't needed and the technology supported at today are:
+- 10xv2
+- 10xv3
