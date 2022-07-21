@@ -25,7 +25,7 @@ The container contains the seguent softwares:
 - DropletUtils (1.14.0)
 - scDblFinder (1.8.0)
 
-The index is the built-in from kallisto (from Jan 2020).
+The index is the built-in from kallisto (from Jan 2022).
 
 The usage is:
 ```
