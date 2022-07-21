@@ -11,6 +11,24 @@ The pre processing consist on:
 - Empty droplets filtration with EmptyDrops
 - Doublets removal using scDblFinder
 
+
+```mermaid
+    flowchart TD
+      A[Create Entry folder] --> B[Read entry]
+      B -- BAM --> C[Download with wget]
+      C --> D[Convert the BAM file in fastq files with CellRanger]
+      D --> E[Check output, rename fastq with entry, remove bam file]
+      E --> H[Fastq files]
+      B -- SRA --> F[Download and convert with fasterq-dump]
+      F --> G[Check output, rename fastq files]
+      G --> H
+      H --> I[Pseudoalignment and counts with kb]
+      I --> J[Filter empty droplet FDR 0.1]
+      J --> K[Filter doublets]
+      K --> L[Remove fastq and bus files]
+
+```
+
 ## Usage: 
 
 All the pipeline is organised in a Docker container to ensure reproducibility and portability of it, the container is available [here](https://hub.docker.com/repository/docker/vergaju/pre-process).
@@ -163,19 +181,3 @@ The final structure of the directory for each row will be as follow:
     - `counts_filtered` contains matrix, barcodes and genes filtered with EmptyDroplets and scDblFinder. These files will be considered for the next Quality Control step.
 
 
-```mermaid
-    flowchart TD
-      A[Create Entry folder] --> B[Read entry]
-      B -- BAM --> C[Download with wget]
-      C --> D[Convert the BAM file in fastq files with CellRanger]
-      D --> E[Check output, rename fastq with entry, remove bam file]
-      E --> H[Fastq files]
-      B -- SRA --> F[Download and convert with fasterq-dump]
-      F --> G[Check output, rename fastq files]
-      G --> H
-      H --> I[Pseudoalignment and counts with kb]
-      I --> J[Filter empty droplet FDR 0.1]
-      J --> K[Filter doublets]
-      K --> L[Remove fastq and bus files]
-
-```
