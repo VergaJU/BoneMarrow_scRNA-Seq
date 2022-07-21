@@ -166,7 +166,9 @@ The final structure of the directory for each row will be as follow:
 ```mermaid
     graph TD;
         Create Entry folder-->Read entries (BAM or SRA);
-        Read entries (BAM or SRA)-->Download with wget: is BAM;
+        Read entries (BAM or SRA)-->is BAM;
+        is BAM-->Download with wget: is BAM;
+
         Read entries (BAM or SRA)-->C;
         B-->D;
         C-->D;
