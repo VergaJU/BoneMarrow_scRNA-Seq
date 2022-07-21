@@ -13,7 +13,7 @@ The pre processing consist on:
 
 
 ```mermaid
-    flowchart TB
+    flowchart LR
       subgraph Data Retrieval
       A([Create Entry folder]) --> B([Read entry])
       B -- BAM --> C([Download with wget])
