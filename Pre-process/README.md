@@ -160,13 +160,14 @@ The final structure of the directory for each row will be as follow:
 - Each entry has it's log files inside the entry folder.
 - `kb_out` is the folder containing all the results from the pre-processing:
     - `counts_unfiltered` contains the matrices from `kb count` in kallisto and CellRanger outputs
-    - `counts_filtered` contaibs the matrix, barcodes and genes filtered with EmptyDroplets and scDblFinder. These files will be considered for the next Quality Control step.
+    - `counts_filtered` contains matrix, barcodes and genes filtered with EmptyDroplets and scDblFinder. These files will be considered for the next Quality Control step.
 
 
 ```mermaid
-  graph TD;
-      A-->B;
-      A-->C;
-      B-->D;
-      C-->D;
+    graph TD;
+        Create Entry folder --> Read entries (BAM or SRA);
+        Read entries (BAM or SRA)-->Download with `wget`: is BAM;
+        Read entries (BAM or SRA)-->C;
+        B-->D;
+        C-->D;
 ```
