@@ -37,19 +37,14 @@ docker run pre-process <csv file>
 The input file is a csv files organised as follow:
 - patient or experiment
 - name of the run
-- entry of the run
+- entry of the run/link
 - technology
 
 example:
 
 ```
 SAMN18822752,SRR14295357,SRR14295357,10xv3
-SAMN18822743,SRR14295358,SRR14295358,10xv3
-SAMN18822742,SRR14295359,SRR14295359,10xv3
-SAMN18822751,SRR14295360,SRR14295360,10xv3
-SAMN18822750,SRR14295361,SRR14295361,10xv3
-SAMN18822749,SRR14295362,SRR14295362,10xv3
-SAMN18822748,SRR14295363,SRR14295363,10xv3
+SAMN18822743,SRR14295358,<link to bam file>,10xv3
 ```
 
 Headers aren't needed and the technology supported at today are:
@@ -66,3 +61,99 @@ Parent Dir
 ```
 
 ### Data retrival
+
+Bam files created with CellRanger have to be inserted as links, wget will download the file. CellRanger then will convert back the bam file to fastq files:
+
+```
+# download
+wget -c <link>
+filename=$(ls) # update filename
+
+## Use cellranger to get the fastq files
+~/.cellranger-6.1.2/lib/bin/bamtofastq \
+    --nthreads=6 \
+    --reads-per-fastq=100000000000 \
+    --traceback \
+    ${filename} \
+    ./fastq/ \
+    |& tee -a bamtofastq.LOG
+```
+
+The log file will be saved in the file `bamtofastq.LOG`.
+
+Sra entries will be automatically downloaded and converted using `fasterq-dump`:
+
+```
+fasterq-dump <entry> -o <entry> -O fastq/ -S --include-technical |& tee -a fasterq-dump.LOG
+cache-mgr -c ~/.sratoolkit.2.11.3-ubuntu64/cache/
+```
+
+The fastq files will be named as the entry. The log file frm fasterq-dump will be saved as `fasterq-dump.LOG`.
+
+### Pesudoalignment and counts:
+
+All the fastq file will be processed with kallisto|bustools:
+
+```
+kb count --verbose -t 6 \
+    --cellranger \
+    -i $index \
+    -g $t2g \
+    -x $tech \
+    -o ./kb_out ${fastqs[@]} \
+    --overwrite |& tee -a kallisto.LOG 
+```
+
+As previously the log file will be saved in `kallisto.LOG`.
+
+### Empty/doublets filtering
+
+Finally, the matrix obtained from kb fill be filtered from empty cells (FDR 0.1)  and doublets:
+
+```
+filter_empty_v2.R ./kb_out/counts_unfiltered/cellranger/ 0.1 |& tee -a filter_empty.LOG
+```
+
+the log file will be saved here: `filter_empty.LOG`
+
+### Cleanup files
+
+Since fastq and bus files are big and occupy a lot of storage, the last step is to remove them:
+
+```
+find . -name "*.fastq" -delete
+find . -name "*.bus" -delete
+```
+
+The final structure of the directory for each row will be as follow:
+```
+.
+├── main.LOG
+└── SAMN15892704
+    └── SRR12506863
+        ├── fasterq-dump.LOG
+        ├── fastq
+        ├── filter_empty.LOG
+        ├── kallisto.LOG
+        └── kb_out
+              ├── 10x_version3_whitelist.txt
+              ├── counts_filtered
+              │   ├── barcodes.tsv
+              │   ├── genes.tsv
+              │   └── matrix.mtx
+              ├── counts_unfiltered
+              │   ├── cellranger
+              │   │   ├── barcodes.tsv
+              │   │   ├── genes.tsv
+              │   │   └── matrix.mtx
+              │   ├── cells_x_genes.barcodes.txt
+              │   ├── cells_x_genes.genes.txt
+              │   └── cells_x_genes.mtx
+              ├── inspect.json
+              ├── kb_info.json
+              ├── matrix.ec
+              ├── run_info.json
+              └── transcripts.txt
+```
+
+`main.LOG` Contains the LOG file from the main script ([pre_process.sh](./scripts/pre_process.sh))
