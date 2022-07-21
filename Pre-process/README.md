@@ -11,6 +11,8 @@ The pre processing consist on:
 - Empty droplets filtration with EmptyDrops
 - Doublets removal using scDblFinder
 
+## Usage: 
+
 All the pipeline is organised in a Docker container to ensure reproducibility and portability of it, the container is available [here](https://hub.docker.com/repository/docker/vergaju/pre-process).
 
 To obtain the latest version of it run:
@@ -53,3 +55,14 @@ SAMN18822748,SRR14295363,SRR14295363,10xv3
 Headers aren't needed and the technology supported at today are:
 - 10xv2
 - 10xv3
+
+## Steps:
+
+For each row (entry) two nested folders will be created:
+```
+Parent Dir
+└── Patient
+     └── Name
+```
+
+### Data retrival
