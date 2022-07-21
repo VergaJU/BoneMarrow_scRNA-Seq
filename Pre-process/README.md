@@ -172,3 +172,10 @@ The final structure of the directory for each row will be as follow:
       E-->F[Download and convert with fasterq-dump];
 
 ```
+```mermaid
+  graph TD;
+      A-->B;
+      A-->C;
+      B-->D;
+      C-->D;
+```
