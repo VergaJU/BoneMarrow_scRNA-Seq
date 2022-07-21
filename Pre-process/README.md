@@ -174,7 +174,7 @@ The final structure of the directory for each row will be as follow:
       F --> G[Check output, rename fastq files]
       G --> H
       H --> I[Pseudoalignment and counts with kallisto|bustool]
-      I --> J[Filter empty droplet - FDR 0.1]
+      I --> J[Filter empty droplet FDR 0.1]
       J --> K[Filter doublets]
       K --> L[Remove fastq and bus files]
 
