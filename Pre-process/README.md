@@ -23,12 +23,12 @@ The pre processing consist on:
       B -- SRA --> F([Download and convert with fasterq-dump])
       F --> G([Check output, rename fastq files])
       end
-      Subgraph Pseudoalignment and counts
+      subgraph Pseudoalignment and counts
       G --> H
       H --> I([Pseudoalignment and counts with kb])
       I --> J([Check output in CellRanger format])
       end
-      Subgraph Filter and clean
+      subgraph Filter and clean
       J --> K([Filter empty droplet FDR 0.1])
       K --> L([Filter doublets])
       L --> M([Remove fastq and bus files])
