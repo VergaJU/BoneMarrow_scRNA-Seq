@@ -156,7 +156,17 @@ The final structure of the directory for each row will be as follow:
               └── transcripts.txt
 ```
 
-- `main.LOG` Contains the LOG file from the main script ([pre_process.sh](./scripts/pre_process.sh)).
+- `main.LOG` Contains the LOG file from the main script ([pre_process.sh](./scripts/pre_process.sh)), one for all the entries inputted.
+- Each entry has it's log files inside the entry folder.
 - `kb_out` is the folder containing all the results from the pre-processing:
     - `counts_unfiltered` contains the matrices from `kb count` in kallisto and CellRanger outputs
     - `counts_filtered` contaibs the matrix, barcodes and genes filtered with EmptyDroplets and scDblFinder. These files will be considered for the next Quality Control step.
+
+
+```mermaid
+  graph TD;
+      A-->B;
+      A-->C;
+      B-->D;
+      C-->D;
+```
