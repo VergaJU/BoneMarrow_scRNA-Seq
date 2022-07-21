@@ -166,17 +166,12 @@ The final structure of the directory for each row will be as follow:
 ```mermaid
     flowchart TD
       A[Create Entry folder] --> B[Read entry]
-      B --> C[is BAM]
-      C --> D[Download with wget]
-      B --> E[is SAM]
-      E --> F[Download and convert with fasterq-dump]
+      B -- BAM --> C[Download with wget]
+      C --> D[Convert the BAM file in fastq files with CellRanger]
+      D --> E[Check output, rename fastq with entry, remove bam file]
+      E --> H[Fastq files]
+      B -- SRA --> F[Download and convert with fasterq-dump]
+      F --> G[Check output, rename fastq files]
+      G --> H
 
-```
-```mermaid
-    flowchart TD
-        A[Start] --> B{Is it?}
-        B -- Yes --> C[OK]
-        C --> D[Rethink]
-        D --> B
-        B -- No ----> E[End]
 ```
