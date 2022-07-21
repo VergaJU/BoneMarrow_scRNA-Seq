@@ -165,7 +165,7 @@ The final structure of the directory for each row will be as follow:
 
 ```mermaid
     flowchart TD
-      A[Create Entry folder] --> B[Read entries (BAM or SRA)]
+      A[Create Entry folder] --> B[Read entry]
       B --> C[is BAM]
       C --> D[Download with wget]
       B --> E[is SAM]
