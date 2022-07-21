@@ -13,9 +13,9 @@ The pre processing consist on:
 
 
 ```mermaid
-    flowchart LR
-      subgraph Data Retrieval
+    flowchart TB
       A([Create Entry folder]) --> B([Read entry])
+      subgraph Data Retrieval
       B -- BAM --> C([Download with wget])
       C --> D([Convert the BAM file in fastq files with CellRanger])
       D --> E([Check output, rename fastq with entry, remove bam file])
