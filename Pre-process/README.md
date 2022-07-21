@@ -14,6 +14,7 @@ The pre processing consist on:
 
 ```mermaid
     flowchart TD
+      subgraph Data Retrieval
       A([Create Entry folder]) --> B([Read entry])
       B -- BAM --> C([Download with wget])
       C --> D([Convert the BAM file in fastq files with CellRanger])
@@ -21,11 +22,16 @@ The pre processing consist on:
       E --> H([Fastq files])
       B -- SRA --> F([Download and convert with fasterq-dump])
       F --> G([Check output, rename fastq files])
+      end
+      Subgraph Pseudoalignment and counts
       G --> H
       H --> I([Pseudoalignment and counts with kb])
-      I --> J([Filter empty droplet FDR 0.1])
-      J --> K([Filter doublets])
-      K --> L([Remove fastq and bus files])
+      I --> J([Check output in CellRanger format])
+      end
+      Subgraph Filter and clean
+      J --> K([Filter empty droplet FDR 0.1])
+      K --> L([Filter doublets])
+      L --> M([Remove fastq and bus files])
 
 ```
 
