@@ -14,18 +14,18 @@ The pre processing consist on:
 
 ```mermaid
     flowchart TD
-      A[Create Entry folder] --> B[Read entry]
-      B -- BAM --> C[Download with wget]
-      C --> D[Convert the BAM file in fastq files with CellRanger]
-      D --> E[Check output, rename fastq with entry, remove bam file]
-      E --> H[Fastq files]
-      B -- SRA --> F[Download and convert with fasterq-dump]
-      F --> G[Check output, rename fastq files]
+      A([Create Entry folder]) --> B([Read entry])
+      B -- BAM --> C([Download with wget])
+      C --> D([Convert the BAM file in fastq files with CellRanger])
+      D --> E([Check output, rename fastq with entry, remove bam file])
+      E --> H([Fastq files])
+      B -- SRA --> F([Download and convert with fasterq-dump])
+      F --> G([Check output, rename fastq files])
       G --> H
-      H --> I[Pseudoalignment and counts with kb]
-      I --> J[Filter empty droplet FDR 0.1]
-      J --> K[Filter doublets]
-      K --> L[Remove fastq and bus files]
+      H --> I([Pseudoalignment and counts with kb])
+      I --> J([Filter empty droplet FDR 0.1])
+      J --> K([Filter doublets])
+      K --> L([Remove fastq and bus files])
 
 ```
 
