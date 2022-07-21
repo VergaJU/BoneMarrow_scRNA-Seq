@@ -167,9 +167,8 @@ The final structure of the directory for each row will be as follow:
     graph TD;
         Create Entry folder-->Read entries (BAM or SRA);
         Read entries (BAM or SRA)-->is BAM;
-        is BAM-->Download with wget: is BAM;
+        is BAM-->Download with wget;
+        Read entries (BAM or SRA)-->is SAM;
+        is SAM-->Download and convert with fasterq-dump;
 
-        Read entries (BAM or SRA)-->C;
-        B-->D;
-        C-->D;
 ```
