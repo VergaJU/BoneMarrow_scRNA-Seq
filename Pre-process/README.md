@@ -33,7 +33,7 @@ The pre processing consist on:
       K --> L([Filter doublets])
       L --> M([Remove fastq and bus files])
       end
-      A --> "Data Retrieval"
+      A --> Data Retrieval
 ```
 
 ## Usage: 
