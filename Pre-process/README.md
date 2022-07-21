@@ -165,10 +165,10 @@ The final structure of the directory for each row will be as follow:
 
 ```mermaid
     graph TD;
-        Create Entry folder-->Read entries (BAM or SRA);
-        Read entries (BAM or SRA)-->is BAM;
-        is BAM-->Download with wget;
-        Read entries (BAM or SRA)-->is SAM;
-        is SAM-->Download and convert with fasterq-dump;
+        A[Create Entry folder]-->B[Read entries (BAM or SRA)];
+        B-->C[is BAM];
+        C-->D[Download with wget];
+        B-->E[is SAM];
+        E-->F[Download and convert with fasterq-dump];
 
 ```
