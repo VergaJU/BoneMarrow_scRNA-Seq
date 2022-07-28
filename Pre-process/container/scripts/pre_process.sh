@@ -47,7 +47,7 @@ while IFS=, read -r patient name entry tech; do
         get_counts $tech # get counts using kb
         cd ../../
     else
-        if  [[ "${filename}" == "BAM" ]] # check if entry is bam or sra
+        if  [[ "${filetype}" == "BAM" ]] # check if entry is bam or sra
         then
             download_bam ${entry} # download the bam file (10x genomics)
             cellranger ${name} # convert file in fastq files using cellranger
