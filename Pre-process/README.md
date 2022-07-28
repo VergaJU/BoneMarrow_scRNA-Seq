@@ -44,7 +44,7 @@ All the pipeline is organised in a Docker container to ensure reproducibility an
 
 To obtain the latest version of it run:
 ```
-docker push vergaju/pre-process:v5
+docker push vergaju/pre-process:v6
 ```
 
 The container contains the seguent softwares:
@@ -56,16 +56,17 @@ The container contains the seguent softwares:
 
 The index is the built-in from kallisto (from Jan 2022).
 
-The usage is:
-```
-docker run pre-process <csv file>
-```
-
-The input file is a csv files organised as follow:
+The input file is a csv file (samed samples.csv) organised as follow:
 - patient or experiment
 - name of the run
 - entry of the run/link
 - technology
+
+
+Headers aren't needed and the technology supported at today are:
+- 10xv2
+- 10xv3
+
 
 example:
 
@@ -73,10 +74,12 @@ example:
 SAMN18822752,SRR14295357,SRR14295357,10xv3
 SAMN18822743,SRR14295358,<link to bam file>,10xv3
 ```
+The file has to be mounted inside the container using the `-v` flag and the path for the file, an example of the command to run the pre-processing is:
 
-Headers aren't needed and the technology supported at today are:
-- 10xv2
-- 10xv3
+```
+docker container run -v /path/to/directory/with/input/file:/var/ vergaju/pre-process:v6
+```
+
 
 ## Steps:
 
