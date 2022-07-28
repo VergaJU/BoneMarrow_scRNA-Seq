@@ -15,7 +15,6 @@
 
 ## output
 # working directory for the patient/sample
-# TODO: modify paths to get results using Docker
 create_folder () {
     folders=($(ls))
     if [[ "${folders[@]}" =~ "${2}" ]]
@@ -70,7 +69,7 @@ download_sra () {
 cellranger () {
     printf "running CellRanger bamtofastq to obtain the fastq files\n"
     ## Use cellranger to get the fastq files
-    cellranger-6.1.2/lib/bin/bamtofastq --nthreads=6 --reads-per-fastq=100000000000 --traceback ${filename} ./fastq/ |& tee -a bamtofastq.LOG
+    bamtofastq --nthreads=6 --reads-per-fastq=100000000000 --traceback ${filename} ./fastq/ |& tee -a bamtofastq.LOG
 }
 
 # Check if cellranger converted correctly the files
