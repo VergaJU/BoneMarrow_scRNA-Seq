@@ -25,6 +25,7 @@ csv=${1}
 
 # run the pipeline
 while IFS=, read -r patient name entry tech; do
+    cd /var/
     check_filetype ${entry} # check if url for bam or sra entry
     printf "Processing sample $name\n"
     create_folder patient ${patient}
