@@ -4,6 +4,7 @@ Pre-process/container/user-settings.mkfg
 Pre-process/container/ref
 Pre-process/container/samples.csv
 Pre-process/container/main.LOG
+Pre-process/scripts/samples.csv
 Merge_bath-correct/swarm_particles/SMM*
 Merge_bath-correct/swarm_particles/.envs
 Merge_bath-correct/swarm_particles/report.log
