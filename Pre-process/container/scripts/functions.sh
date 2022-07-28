@@ -33,10 +33,10 @@ create_folder () {
 ## input: 3rd column of the csv file, SRA entry or url to download bam file
 ## output: variable "filetype" for next steps
 check_filetype () {
-    if [[ "${1}" =~ "https" ]]
+    if [[ "${1}" == https* ]]
     then
         filetype="BAM"
-    elif [[ "${1}" =~ "SRR" ]]
+    elif [[ "${1}" == SRR* ]]
     then
         filetype="SRA"
     fi
@@ -113,7 +113,7 @@ check_sra () {
         done
 
     else
-        print "ERROR: File not downloaded correctly, EXITING\n"
+        printf "ERROR: File not downloaded correctly, EXITING\n"
         exit 1
     fi
 }
