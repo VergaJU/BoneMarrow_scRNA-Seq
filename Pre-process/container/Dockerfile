@@ -6,13 +6,13 @@ RUN apt-get update --fix-missing && apt-get install -y apt-utils procps wget bzi
 
 # Download and add in the path CellRanger
 ADD .cellranger-6.1.2 ./.cellranger-6.1.2/
-ENV PATH=$HOME/.cellranger-6.1.2:$PATH
+ENV PATH=/.cellranger-6.1.2/lib/bin/:$PATH
 
 #Download and install SraToolkit
 RUN wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.11.3/sratoolkit.2.11.3-ubuntu64.tar.gz
 # Unzip the archive
 RUN tar xzvf sratoolkit.2.11.3-ubuntu64.tar.gz
-ENV PATH=$HOME/sratoolkit.2.11.3-ubuntu64/bin:$PATH
+ENV PATH=/sratoolkit.2.11.3-ubuntu64/bin:$PATH
 RUN vdb-config --restore-defaults
 RUN rm -f /root/.ncbi/user-settings.mkfg
 ADD user-settings.mkfg /root/.ncbi/user-settings.mkfg
