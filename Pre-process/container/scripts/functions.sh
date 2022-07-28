@@ -15,6 +15,7 @@
 
 ## output
 # working directory for the patient/sample
+# TODO: modify paths to get results using Docker
 create_folder () {
     folders=($(ls))
     if [[ "${folders[@]}" =~ "${2}" ]]
