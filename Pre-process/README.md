@@ -75,7 +75,7 @@ SAMN18822752,SRR14295357,SRR14295357,10xv3
 SAMN18822743,SRR14295358,<link to bam file>,10xv3
 ```
 
-The working directory has to be mounted inside the container using the `-v`, an example of the command to run the pre-processing is:
+The working directory with the input file has to be mounted in the `/var/` directory of the container using the `-v`, an example of the command to run the pre-processing is:
 
 ```
 docker container run -v ${PWD}:/var/ vergaju/pre-process:v6
