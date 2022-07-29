@@ -74,10 +74,11 @@ example:
 SAMN18822752,SRR14295357,SRR14295357,10xv3
 SAMN18822743,SRR14295358,<link to bam file>,10xv3
 ```
-The file has to be mounted inside the container using the `-v` flag and the path for the file, an example of the command to run the pre-processing is:
+
+The working directory has to be mounted inside the container using the `-v`, an example of the command to run the pre-processing is:
 
 ```
-docker container run -v /path/to/directory/with/input/file:/var/ vergaju/pre-process:v6
+docker container run -v ${PWD}:/var/ vergaju/pre-process:v6
 ```
 
 
