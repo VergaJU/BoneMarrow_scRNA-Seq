@@ -181,6 +181,7 @@ get_counts () {
         printf "Files preprocessed correctly\nRemove fastq and bus files to save hard drive space\nReturn in root folder\n"
         find . -name "*.fastq" -delete
         find . -name "*.bus" -delete
+        find . -name "*.fastq.gz" -delete
     else
         printf "ERROR: Cells not correctly filtered. EXITING"
         exit 1
