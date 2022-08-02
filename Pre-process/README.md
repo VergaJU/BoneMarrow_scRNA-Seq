@@ -42,11 +42,6 @@ The pre processing consist on:
 
 All the pipeline is organised in a Docker container to ensure reproducibility and portability of it, the container is available [here](https://hub.docker.com/repository/docker/vergaju/pre-process).
 
-To obtain the latest version of it run:
-```
-docker push vergaju/pre-process:v6
-```
-
 The container contains the seguent softwares:
 - kallisto|bustools python wrapper (0.27.0)
 - sratoolkit (2.11.3)
@@ -74,11 +69,17 @@ example:
 SAMN18822752,SRR14295357,SRR14295357,10xv3
 SAMN18822743,SRR14295358,<link to bam file>,10xv3
 ```
+### Run with docker
+
+To obtain the latest version of it run:
+```
+docker push vergaju/pre-process:v8
+```
 
 The working directory with the input file has to be mounted in the `/var/` directory of the container using the `-v`, an example of the command to run the pre-processing is:
 
 ```
-docker container run -v ${PWD}:/var/ vergaju/pre-process:v6
+docker container run -v ${PWD}:/var/ vergaju/pre-process:v8
 ```
 
 
