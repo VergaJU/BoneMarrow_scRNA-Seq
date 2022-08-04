@@ -50,10 +50,10 @@ suffix <- paste0("_harmony_",opt$theta_batch,"_",opt$theta_celltype,".Rds")
 
 output <-str_replace(opt$input_file, ".Rds", suffix)
 
-#dat <- readRDS(opt$input_file)
+dat <- readRDS(opt$input_file)
 
 vars = c(opt$batch_key, opt$celltype_key)
 thetas = c(opt$theta_batch, opt$theta_celltype)
 
-#dat <- RunHarmony(dat, vars, theta = thetas, max.iter.harmony = 100)
-#saveRDS(dat, output)
+dat <- RunHarmony(dat, vars, theta = thetas, max.iter.harmony = 100)
+saveRDS(dat, output)
