@@ -10,6 +10,6 @@ cell=(0 1 2)
 
 for b in ${batch[@]};do 
     for c in ${cell[@]};do 
-        run_harmony_celltype.R -i DATASET_seurat_PCA.Rds -t ${b} -l ${c}
+        run_harmony_celltype.R -i ${1} -t ${b} -l ${c}
     done
 done
