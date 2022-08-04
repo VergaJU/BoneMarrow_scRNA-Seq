@@ -9,9 +9,9 @@ library(optparse)
 
 # tsv file containing paths to the files to be merged and cell labels obtained with stringR
 # path/to/file path/to/labels
-file_list <- commandArgs(trailingOnly = TRUE)[1]
+#file_list <- commandArgs(trailingOnly = TRUE)[1]
 # condition to rename the merged file (string)
-condition_name <- commandArgs(trailingOnly = TRUE)[2] 
+#condition_name <- commandArgs(trailingOnly = TRUE)[2] 
 
 option_list = list(
   make_option(
@@ -45,7 +45,7 @@ opt <- parse_args(OptionParser(option_list=option_list))
 ## output: seurat and sce objects named as condition
 merge.data <- function(filepath,condition,batch){
     # Load file paths
-    files <- read.csv(filepath, sep = "\t", header=F)
+    files <- read.csv(filepath, header=F)
     # create variables
     dats = list()
     samples = vector()
