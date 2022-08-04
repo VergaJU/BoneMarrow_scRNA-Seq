@@ -52,5 +52,5 @@ output <-str_replace(opt$input_file, ".Rds", suffix)
 
 dat <- readRDS(opt$input_file)
 
-RunHarmony(dat, opt$batch_key, theta = opt$theta, lambda = opt$lambda, sigma = opt$sigma, max.iter.harmony = 100)
+dat <- RunHarmony(dat, opt$batch_key, theta = opt$theta, lambda = opt$lambda, sigma = opt$sigma, max.iter.harmony = 100)
 saveRDS(dat, output)
