@@ -9,7 +9,20 @@ dependencies:
   - _r-mutex=1.0.1=anacondar_1
   - binutils_impl_linux-64=2.36.1=h193b22a_2
   - binutils_linux-64=2.36=hf3e587d_10
+  - bioconductor-biobase=2.54.0=r41h5c21468_1
+  - bioconductor-biocgenerics=0.40.0=r41hdfd78af_0
   - bioconductor-biocinstaller=1.22.3=0
+  - bioconductor-delayedarray=0.20.0=r41h5c21468_1
+  - bioconductor-genomeinfodb=1.30.0=r41hdfd78af_0
+  - bioconductor-genomeinfodbdata=1.2.7=r41hdfd78af_1
+  - bioconductor-genomicranges=1.46.1=r41h5c21468_0
+  - bioconductor-iranges=2.28.0=r41h5c21468_1
+  - bioconductor-matrixgenerics=1.6.0=r41hdfd78af_0
+  - bioconductor-s4vectors=0.32.3=r41h5c21468_0
+  - bioconductor-singlecellexperiment=1.16.0=r41hdfd78af_0
+  - bioconductor-summarizedexperiment=1.24.0=r41hdfd78af_0
+  - bioconductor-xvector=0.34.0=r41h5c21468_1
+  - bioconductor-zlibbioc=1.40.0=r41h5c21468_1
   - bwidget=1.9.14=ha770c72_1
   - bzip2=1.0.8=h7f98852_4
   - c-ares=1.18.1=h7f98852_0
@@ -138,6 +151,7 @@ dependencies:
   - r-gridextra=2.3=r41hc72bb7e_1003
   - r-gtable=0.3.0=r41hc72bb7e_3
   - r-gtools=3.9.2.2=r41h06615bd_0
+  - r-harmony=0.1=r41h9f5acd7_3
   - r-here=1.0.1=r41hc72bb7e_0
   - r-hexbin=1.28.2=r41h8da6f51_0
   - r-htmltools=0.5.2=r41h03ef668_0
@@ -200,6 +214,7 @@ dependencies:
   - r-rcppparallel=5.1.5=r41h03ef668_0
   - r-rcppprogress=0.4.2=r41hc72bb7e_1
   - r-rcpptoml=0.1.7=r41h03ef668_1
+  - r-rcurl=1.98_1.8=r41h06615bd_0
   - r-recommended=4.1=r41hd8ed1ab_1004
   - r-rematch2=2.1.2=r41hc72bb7e_1
   - r-reshape2=1.4.4=r41h03ef668_1
@@ -267,4 +282,4 @@ dependencies:
   - xz=5.2.5=h516909a_1
   - zlib=1.2.12=h166bdaf_0
   - zstd=1.5.2=h8a70e8d_1
-prefix: /home/jacopo/anaconda3/envs/harmony
+prefix: /home/jacopo/miniconda3/envs/harmony
