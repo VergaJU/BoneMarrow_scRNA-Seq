@@ -1,4 +1,5 @@
-#!/home/jacopo/anaconda3/envs/convert/bin/Rscript
+#!/home/jacopo/miniconda3/envs/convert/bin/Rscript
+
 library(reticulate)
 library(Seurat)
 library(Matrix)
