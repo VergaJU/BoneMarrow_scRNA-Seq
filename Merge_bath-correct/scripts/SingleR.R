@@ -1,4 +1,4 @@
-#!/home/jacopo/anaconda3/envs/singler/bin/Rscript
+#!/home/jacopo/miniconda3/envs/singler/bin/Rscript
 
 library(Seurat)
 library(SingleCellExperiment)
