@@ -73,7 +73,7 @@ SAMN18822743,SRR14295358,<link to bam file>,10xv3
 
 To obtain the latest version of it run:
 ```
-docker push vergaju/pre-process:v8
+docker pull vergaju/pre-process:v8
 ```
 
 The working directory with the input file has to be mounted in the `/var/` directory of the container using the `-v`, an example of the command to run the pre-processing is:
