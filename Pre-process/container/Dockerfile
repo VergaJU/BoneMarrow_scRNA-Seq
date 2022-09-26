@@ -20,6 +20,7 @@ RUN rm -f sratoolkit.2.11.3-ubuntu64.tar.gz
 
 
 # create conda environment
+RUN conda update --all
 ADD pre_process.yml .
 RUN conda init bash \
     && . ~/.bashrc \
@@ -31,5 +32,5 @@ RUN conda init bash \
 ADD /ref/ /lib/ref/
 ADD /scripts/* /usr/local/bin/
 RUN chmod +x /usr/local/bin/*
-CMD [ "/usr/local/bin/pre_process.sh", "/var/samples.csv"]
+#CMD [ "/usr/local/bin/pre_process.sh", "/var/samples.csv"] don't run if using with singularity
 #RUN source /scripts/pre_process.sh
