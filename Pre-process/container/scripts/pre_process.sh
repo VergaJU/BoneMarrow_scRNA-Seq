@@ -1,6 +1,7 @@
 #! /bin/bash
 
-cd /var/ # move to mounted directory and made the files available outside the container
+# if using with singularity dont go in /var/
+#cd /var/ # move to mounted directory and made the files available outside the container
 
 source /usr/local/bin/functions.sh # source the files with functions
 
