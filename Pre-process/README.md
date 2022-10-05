@@ -71,7 +71,7 @@ SAMN18822743,SRR14295358,<link to bam file>,10xv3
 ```
 ### Run with docker
 
-To obtain the latest version of it run:
+To obtain the latest version run:
 ```
 docker pull vergaju/pre-process:v8
 ```
@@ -82,6 +82,17 @@ The working directory with the input file has to be mounted in the `/var/` direc
 docker container run -v ${PWD}:/var/ vergaju/pre-process:v8
 ```
 
+### Run with singularity
+
+To obtain the latest version for singularity run:
+```
+singularity pull docker://vergaju/pre-process:singularity
+```
+
+Since singularity can directly communicate with the global environment the container can be run directly without mounting the directory inside the container and using input files with different name. An example:
+```
+singularity exec pre-process_singularity.sif pre_process.sh samples.csv
+```
 
 ## Steps:
 
