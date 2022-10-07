@@ -1,9 +1,9 @@
-Pre-process/container/.cellranger-6.1.2
-Pre-process/container/.cellranger-6.1.2/*
-Pre-process/container/user-settings.mkfg
-Pre-process/container/ref
-Pre-process/container/samples.csv
-Pre-process/container/main.LOG
+Pre-process/pipeline_container/.cellranger-6.1.2
+Pre-process/pipeline_container/.cellranger-6.1.2/*
+Pre-process/pipeline_container/user-settings.mkfg
+Pre-process/pipeline_container/ref
+Pre-process/pipeline_container/samples.csv
+Pre-process/pipeline_container/main.LOG
 Pre-process/scripts/samples.csv
 Pre-process/scripts/test
 Pre-process/scripts/main.LOG
@@ -12,3 +12,4 @@ Merge_bath-correct/swarm_particles/.envs
 Merge_bath-correct/swarm_particles/report.log
 Merge_bath-correct/scripts/.vscode/*
 Merge_bath-correct/swarm_particles/.vscode/*
+Pre-process/download_sam_container/user-settings.mkfg
