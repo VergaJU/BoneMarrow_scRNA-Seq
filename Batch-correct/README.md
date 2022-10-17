@@ -54,6 +54,5 @@ h     Print this Help.
       end
       subgraph Eval
       I --> J([Run lisi silWidth for batch and labels inputted using scPOP])
-      end
 
 ```
