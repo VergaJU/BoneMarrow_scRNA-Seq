@@ -56,6 +56,6 @@ Flowchart:
       H --> I([Save Umap figure and csv])
       end
       subgraph Eval
-      I --> J([Run lisi silWidth for batch and labels inputted using scPOP])
+      I --> J([Run lisi silWidth for batch and labels inputted])
 
 ```
