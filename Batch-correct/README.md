@@ -39,7 +39,7 @@ h     Print this Help.
 
 Flowchart:
 
-``mermaid
+```mermaid
     flowchart TD
       subgraph preprocess
       A([Get input file]) --> B([convert matrix from csc to csr])
