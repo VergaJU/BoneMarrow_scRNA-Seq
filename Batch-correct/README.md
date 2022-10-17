@@ -48,15 +48,18 @@ Flowchart:
       D --> E([save tmp file])
       end
       subgraph scVI
-      E --> F([run scVI for each latent space dimension])
+      F([run scVI for each latent space dimension])
       F --> G([Save latent space representation and model])
       end
       subgraph UMAP
-      G --> H([Run umap for each latent representation and inputted])
+      H([Run umap for each latent representation and inputted])
       H --> I([Save Umap figure and csv])
       end
       subgraph Eval
-      I --> J([Run lisi silWidth for batch and labels inputted])
+      J([Run lisi silWidth for batch and labels inputted])
       end
+      E --> scVI
+      G --> UMAP
+      I --> Eval
 
 ```
