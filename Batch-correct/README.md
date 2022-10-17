@@ -36,6 +36,9 @@ s     second key (optional, another label key)
 h     Print this Help.
 ```
 
+
+Flowchart:
+
 ``mermaid
     flowchart TD
       subgraph preprocess
