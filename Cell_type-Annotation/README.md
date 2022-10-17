@@ -10,8 +10,7 @@ After annotating the cells I converted the files in anndata format using sceasy 
 
 The conversion was done to:
 - To run the batch correction with scVI available [here](../Merge_batch-correct/).
-- Score the set of markers to identify those NK that show exhausted phenotypes (set of markers is [here](../../ScoreMarkers/data/nk_exhaustion.csv) retrieved from the paper: [Foroutan *et al* 2021](
-https://doi.org/10.1158/2326-6066.CIR-21-0137))
+- Score the set of markers to identify those NK that show exhausted phenotypes (set of markers is [here](https://github.com/VergaJU/ScoreMarkers/blob/main/data/nk_exhaustion.csv) retrieved from the paper: [Foroutan *et al* 2021](https://doi.org/10.1158/2326-6066.CIR-21-0137))
 
 The report on batch correction and cell type annotation is available [here](../Reports/Batch_annotation.ipynb) and [here](../Reports/cell-proportions.ipynb)
 
