@@ -1,0 +1,11 @@
+name: singler
+channels:
+  - conda-forge
+  - defaults
+  - bioconda
+dependencies:
+  - r-seurat
+  - bioconductor-biocinstaller
+  - bioconductor-singler
+  - bioconductor-singlecellexperiment
+  - r-optparse
