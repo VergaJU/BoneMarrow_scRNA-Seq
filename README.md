@@ -11,4 +11,3 @@ The repo is organised in:
 - [Quality control](./Quality-control)
 - [Merging/Batch correction](./Merge_batch-correct)
 - [Cell type annotation](./Cell_type-Annotation/)
-- Cell Identification

@@ -6,6 +6,4 @@ The queries datasets are:
 - Collection of all MM datasets after QC, raw counts
 - Collection of HEalthy datasets after QC, raw counts
 
-After annotating the cells I converted the files in anndata format using sceasy (v 0.0.5) available from the container [batch_correct](https://singularityhub.github.io/singularityhub-archive/containers/Sarah145-batch_correct-latest/) build by [Sarah Ennis](https://github.com/Sarah145).
-
-To evaluate the annotation quality and proportions I created some jupyter notebooks available [here](./report/)
+After annotating the cells I converted the files in anndata format using sceasy (v 0.0.5) available from the container [batch_correct](https://singularityhub.github.io/singularityhub-archive/containers/Sarah145-batch_correct-latest/) build by [Sarah Ennis](https://github.com/Sarah145). To run the batch correction with scVI available [here](../Merge_batch-correct/)
