@@ -14,3 +14,8 @@ Merge_bath-correct/scripts/.vscode/*
 Merge_bath-correct/swarm_particles/.vscode/*
 Pre-process/download_sam_container/user-settings.mkfg
 Cell_type-Annotation/ref/triana_clean.Rds
+Reports/Data/Healthy_raw_labelled.h5ad
+Reports/Data/MM_atlas_raw_labelled.h5ad
+Reports/Batch_annotation.ipynb
+*.ipynb
+*.h5ad
