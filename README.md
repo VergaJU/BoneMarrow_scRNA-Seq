@@ -9,6 +9,6 @@ To made the studies comparable I decided to pre-process all the files from raw f
 The repo is organised in:
 - [Pre processing](./Pre-process)
 - [Quality control](./Quality-control)
-- [Merga](./Merge-data/)
+- [Merge](./Merge-data/)
 - [Batch correction](./Batch-correct/)
 - [Cell type annotation](./Cell_type-Annotation/)
