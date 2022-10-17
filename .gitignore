@@ -13,3 +13,4 @@ Merge_bath-correct/swarm_particles/report.log
 Merge_bath-correct/scripts/.vscode/*
 Merge_bath-correct/swarm_particles/.vscode/*
 Pre-process/download_sam_container/user-settings.mkfg
+Cell_type-Annotation/ref/triana_clean.Rds
