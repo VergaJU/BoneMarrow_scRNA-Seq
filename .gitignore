@@ -17,5 +17,7 @@ Cell_type-Annotation/ref/triana_clean.Rds
 Reports/Data/Healthy_raw_labelled.h5ad
 Reports/Data/MM_atlas_raw_labelled.h5ad
 Reports/Batch_annotation.ipynb
-*.ipynb
+Reports/cell-proportions.ipynb
 *.h5ad
+*.png
+Reports/.ipynb_checkpoints/
