@@ -37,23 +37,23 @@ RUN rm -f refdata-gex-GRCh38-2020-A.tar.gz
 RUN ls -R refdata-gex-GRCh38-2020-A
 
 #Download and install SraToolkit
-#RUN wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.11.3/sratoolkit.2.11.3-ubuntu64.tar.gz
+RUN wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.11.3/sratoolkit.2.11.3-ubuntu64.tar.gz
 # Unzip the archive
-#RUN tar xzvf sratoolkit.2.11.3-ubuntu64.tar.gz
-#ENV PATH=/sratoolkit.2.11.3-ubuntu64/bin:$PATH
-#RUN vdb-config --restore-defaults
-#RUN rm -f /root/.ncbi/user-settings.mkfg
-#ADD user-settings.mkfg /root/.ncbi/user-settings.mkfg
-#RUN rm -f sratoolkit.2.11.3-ubuntu64.tar.gz
+RUN tar xzvf sratoolkit.2.11.3-ubuntu64.tar.gz
+ENV PATH=/sratoolkit.2.11.3-ubuntu64/bin:$PATH
+RUN vdb-config --restore-defaults
+RUN rm -f /root/.ncbi/user-settings.mkfg
+ADD user-settings.mkfg /root/.ncbi/user-settings.mkfg
+RUN rm -f sratoolkit.2.11.3-ubuntu64.tar.gz
 
 
 # create conda environment
-#RUN conda update --all
-#ADD pre_process.yml .
-#RUN conda init bash \
-#    && . ~/.bashrc \
-#    && conda env create -f pre_process.yml \
-#    && conda activate pre_process
+RUN conda update --all
+ADD pre_process.yml .
+RUN conda init bash \
+    && . ~/.bashrc \
+    && conda env create -f pre_process.yml \
+    && conda activate pre_process
 
 
 
