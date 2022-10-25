@@ -166,8 +166,10 @@ get_counts () {
     --id=${1} \
     --transriptome=/refdata-gex-GRCh38-2020-A \
     --fastqs=./fastq \
-    --sample=${1} 
-    
+    --sample=${1} \
+    --nosecondary \
+    --no-bam
+
     if [[ "$(find kb_out) " =~ "cellranger" ]] # check if counts obtained correctly
     then
         # filter empty droplets using EmptyDroplets, FDR<0.1
