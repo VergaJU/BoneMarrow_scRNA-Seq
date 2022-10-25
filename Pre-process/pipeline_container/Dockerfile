@@ -31,10 +31,10 @@ ENV PATH=/cellranger-7.0.1/lib/bin:$PATH
 
 
 # Download reference transcriptome
-RUN wget https://cf.10xgenomics.com/supp/cell-exp/refdata-gex-GRCh38-2020-A.tar.gz
-RUN tar -xzvf refdata-gex-GRCh38-2020-A.tar.gz
-RUN rm -f refdata-gex-GRCh38-2020-A.tar.gz
-RUN ls -R refdata-gex-GRCh38-2020-A
+#RUN wget https://cf.10xgenomics.com/supp/cell-exp/refdata-gex-GRCh38-2020-A.tar.gz
+#RUN tar -xzvf refdata-gex-GRCh38-2020-A.tar.gz
+#RUN rm -f refdata-gex-GRCh38-2020-A.tar.gz
+#RUN ls -R refdata-gex-GRCh38-2020-A
 
 #Download and install SraToolkit
 RUN wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/2.11.3/sratoolkit.2.11.3-ubuntu64.tar.gz
