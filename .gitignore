@@ -17,3 +17,5 @@ Cell_type-Annotation/ref/triana_clean.Rds
 *.h5ad
 *.png
 Reports/.ipynb_checkpoints/
+Pre-process/pipeline_container/SAMN15892706/
+Pre-process/pipeline_container/main.LOG

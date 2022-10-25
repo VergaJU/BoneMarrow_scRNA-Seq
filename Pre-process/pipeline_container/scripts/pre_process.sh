@@ -1,10 +1,10 @@
 #! /bin/bash
 
 # if using with singularity dont go in /var/
-#cd /var/ # move to mounted directory and made the files available outside the container
+cd /home/ # move to mounted directory and made the files available outside the container
 
-source /usr/local/bin/functions.sh # source the files with functions
-
+#source /usr/local/bin/functions.sh # source the files with functions
+source /home/scripts/functions.sh # source temp functions
 # Redirect stdout ( > ) into a named pipe ( >() ) running "tee"
 exec > >(tee -ia main.LOG)
 
@@ -13,13 +13,13 @@ source /opt/conda/etc/profile.d/conda.sh
 
 
 # path for the reference index to obtain the counts (for kb)
-ref="/lib/ref"
+#ref="/lib/ref"
 
 # reference index (for kb)
-index=$ref/index.idx
+#index=$ref/index.idx
 
 # reference transcripts to gene (for kb)
-t2g=$ref/t2g.txt
+#t2g=$ref/t2g.txt
 
 # first argument for the csv files containing the samples, format:
 # patient_ID,sample_ID,entry(url or sra entry),tech(10xv2 or 10xv3)
@@ -60,7 +60,7 @@ while IFS=, read -r patient name entry tech; do
         fi
 
         #determine_tech
-        get_counts $tech # get counts using kb
+        get_counts ${entry} # get counts using kb
         cd ../../
     fi
 done < "$csv" 

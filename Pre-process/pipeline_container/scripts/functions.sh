@@ -161,8 +161,13 @@ get_counts () {
     # -x technology
     # -o output
     printf "running kb to obtain counts\n"
-    kb count --verbose -t 6 --cellranger -i $index -g $t2g -x $tech -o ./kb_out ${fastqs[@]} --overwrite |& tee -a kallisto.LOG 
-
+    #kb count --verbose -t 6 --cellranger -i $index -g $t2g -x $tech -o ./kb_out ${fastqs[@]} --overwrite |& tee -a kallisto.LOG 
+    cellranger count \
+    --id=${1} \
+    --transriptome=/refdata-gex-GRCh38-2020-A \
+    --fastqs=./fastq \
+    --sample=${1} 
+    
     if [[ "$(find kb_out) " =~ "cellranger" ]] # check if counts obtained correctly
     then
         # filter empty droplets using EmptyDroplets, FDR<0.1
