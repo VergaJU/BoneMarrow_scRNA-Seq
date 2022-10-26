@@ -66,7 +66,7 @@ download_sra () {
 ## Input: string, filename, bam file previously downloaded
 ## Output: 3 fastq files
 
-cellranger () {
+cellranger_bam () {
     printf "running CellRanger bamtofastq to obtain the fastq files\n"
     ## Use cellranger to get the fastq files
     bamtofastq --nthreads=6 --reads-per-fastq=100000000000 --traceback ${filename} ./fastq/ |& tee -a bamtofastq.LOG
@@ -104,11 +104,11 @@ check_sra () {
         for file in ./fastq/* ; do
         len="$(cat ${file} | head -80 | sed -n 2~4p | awk '{ print length }' | awk -F : '{sum+=$1} END {print sum/NR}' | cut -f1 -d".")";
             if [[ $len -lt 26 ]]; then
-            mv $file ${file%_*.fastq}_I1.fastq
+            mv $file ${file%_*.fastq}_S1_L001_I1_001.fastq
             elif [[ $len -eq 26 || $len -eq 28 ]]; then
-            mv $file ${file%_*.fastq}_R1.fastq
+            mv $file ${file%_*.fastq}_S1_L001_R1_001.fastq
             elif [[ $len -gt 26 && $len -gt 28 ]]; then
-            mv $file ${file%_*.fastq}_R2.fastq           
+            mv $file ${file%_*.fastq}_S1_L001_R2_001.fastq           
             fi
         done
 
@@ -160,34 +160,41 @@ get_counts () {
     # -g t2g
     # -x technology
     # -o output
-    printf "running kb to obtain counts\n"
+    printf "running cellranger to obtain counts\n"
     #kb count --verbose -t 6 --cellranger -i $index -g $t2g -x $tech -o ./kb_out ${fastqs[@]} --overwrite |& tee -a kallisto.LOG 
     cellranger count \
-    --id=${1} \
-    --transriptome=/refdata-gex-GRCh38-2020-A \
-    --fastqs=./fastq \
-    --sample=${1} \
+    --id cr \
+    --transcriptome /home/refdata-gex-GRCh38-2020-A \
+    --fastqs ./fastq \
+    --sample ${1} \
     --nosecondary \
-    --no-bam
+    --include-introns false \
+    --no-bam |& tee -a cellranger.LOG
 
-    if [[ "$(find kb_out) " =~ "cellranger" ]] # check if counts obtained correctly
+    mkdir out
+
+    if [[ "$(find cr) " =~ "outs" ]] # check if counts obtained correctly
     then
         # filter empty droplets using EmptyDroplets, FDR<0.1
         # filter doublets using scDblFinder
         # output: folder with filtered cells
         printf "filtering empty droplets with FDR threshold of 0.1\n"
-        /usr/local/bin/filter_empty_v2.R ./kb_out/counts_unfiltered/cellranger/ 0.1 |& tee -a filter_empty.LOG
+        /home/scripts/filter_empty_v2.R $(pwd)/cr/outs/filtered_feature_bc_matrix/ 0.1 |& tee -a filter_empty.LOG
     else
-        printf "ERROR: kallisto|bustool failed obtaining the counts. EXITING"
+        printf "ERROR: cellranger failed obtaining the counts. EXITING"
         exit 1
     fi
 
-    if [[ "$(find kb_out) " =~ "counts_filtered" ]]
+    if [[ "$(find out) " =~ "counts_filtered" ]]
     then
         # remove fastq and bus files
         printf "Files preprocessed correctly\nRemove fastq and bus files to save hard drive space\nReturn in root folder\n"
+        mv $(pwd)/cr/outs/filtered_feature_bc_matrix/ out/
+        mv $(pwd)/cr/outs/web_summary.html out/
+        rm -fr cr
+        rm -fr fastq/
         find . -name "*.fastq" -delete
-        find . -name "*.bus" -delete
+        find . -name "*.bam" -delete
         find . -name "*.fastq.gz" -delete
     else
         printf "ERROR: Cells not correctly filtered. EXITING"

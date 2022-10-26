@@ -4,7 +4,8 @@
 cd /home/ # move to mounted directory and made the files available outside the container
 
 #source /usr/local/bin/functions.sh # source the files with functions
-source /home/scripts/functions.sh # source temp functions
+
+source /usr/local/bin/scripts/functions.sh # source temp functions
 # Redirect stdout ( > ) into a named pipe ( >() ) running "tee"
 exec > >(tee -ia main.LOG)
 
@@ -46,13 +47,13 @@ while IFS=, read -r patient name entry tech; do
         fi
 
         #determine_tech
-        get_counts $tech # get counts using kb
+        get_counts ${entry} # get counts using kb
         cd ../../
     else
         if  [[ "${filetype}" == "BAM" ]] # check if entry is bam or sra
         then
             download_bam ${entry} # download the bam file (10x genomics)
-            cellranger ${name} # convert file in fastq files using cellranger
+            cellranger_bam ${name} # convert file in fastq files using cellranger
             check_bam # check if converted correctly
         else
             download_sra ${entry} # if entry is sra, automatically download and convert file in fastq using fasterq-dump

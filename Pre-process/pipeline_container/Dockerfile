@@ -57,7 +57,7 @@ RUN conda init bash \
 
 
 
-#ADD /scripts/* /usr/local/bin/
-#RUN chmod +x /usr/local/bin/*
+ADD /scripts/* /usr/local/bin/
+RUN chmod +x /usr/local/bin/*
 #CMD [ "/usr/local/bin/pre_process.sh", "/var/samples.csv"] don't run if using with singularity
-#RUN source /scripts/pre_process.sh
+RUN source /scripts/pre_process.sh

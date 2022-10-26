@@ -54,7 +54,7 @@ genes  <- read.csv(paste0(filepath, genes.file), sep = "\t", header = F)# attach
 rownames(m) <- genes[,2]
 colnames(m) <- read.csv(paste0(filepath, "/barcodes.tsv"), sep = "\t", header = F)[,1] # attach barcodes
 cols = colSums(m) > 10 #create vector of cells with more than 10 counts
- m <- m[,cols] # remove cells with extremely low counts to avoid errors in scDblFinder
+m <- m[,cols] # remove cells with extremely low counts to avoid errors in scDblFinder
 empty <- emptyDrops(m) # compute the probability of empty droplets
 full <- empty$FDR <= args[2] # filter by selected FDR threshold
 full[is.na(full)] <- FALSE # remove NAs
@@ -73,6 +73,6 @@ dim(filtered_m)
 dim(filtered_m1)
 
 
-DropletUtils::write10xCounts("./kb_out/counts_filtered", gene.symbol = genes[,2], filtered_m1, overwrite = T) # write result
+DropletUtils::write10xCounts("./out/counts_filtered", gene.symbol = genes[,2], filtered_m1, overwrite = T) # write result
 
 cat("Filtering completed correctly.\n")
