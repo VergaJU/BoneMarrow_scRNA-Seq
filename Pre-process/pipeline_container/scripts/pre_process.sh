@@ -3,9 +3,9 @@
 # if using with singularity dont go in /var/
 cd /home/ # move to mounted directory and made the files available outside the container
 
-#source /usr/local/bin/functions.sh # source the files with functions
+source /usr/local/bin/functions.sh # source the files with functions
 
-source /usr/local/bin/scripts/functions.sh # source temp functions
+# source /usr/local/bin/scripts/functions.sh # source temp functions
 # Redirect stdout ( > ) into a named pipe ( >() ) running "tee"
 exec > >(tee -ia main.LOG)
 

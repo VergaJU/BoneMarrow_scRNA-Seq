@@ -55,9 +55,7 @@ RUN conda init bash \
     && conda env create -f pre_process.yml \
     && conda activate pre_process
 
-
-
 ADD /scripts/* /usr/local/bin/
 RUN chmod +x /usr/local/bin/*
 #CMD [ "/usr/local/bin/pre_process.sh", "/var/samples.csv"] don't run if using with singularity
-RUN source /scripts/pre_process.sh
+#ENV PATH=/usr/local/bin:$PATH
