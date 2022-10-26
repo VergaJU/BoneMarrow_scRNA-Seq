@@ -69,7 +69,7 @@ download_sra () {
 cellranger_bam () {
     printf "running CellRanger bamtofastq to obtain the fastq files\n"
     ## Use cellranger to get the fastq files
-    bamtofastq --nthreads=6 --reads-per-fastq=100000000000 --traceback ${filename} ./fastq/ |& tee -a bamtofastq.LOG
+    bamtofastq --reads-per-fastq=100000000000 --traceback ${filename} ./fastq/ |& tee -a bamtofastq.LOG
 }
 
 # Check if cellranger converted correctly the files
@@ -179,7 +179,7 @@ get_counts () {
         # filter doublets using scDblFinder
         # output: folder with filtered cells
         printf "filtering empty droplets with FDR threshold of 0.1\n"
-        /home/scripts/filter_empty_v2.R $(pwd)/cr/outs/filtered_feature_bc_matrix/ 0.1 |& tee -a filter_empty.LOG
+        filter_empty_v2.R ./cr/outs/raw_feature_bc_matrix/ 0.1 |& tee -a filter_empty.LOG
     else
         printf "ERROR: cellranger failed obtaining the counts. EXITING"
         exit 1
@@ -189,7 +189,7 @@ get_counts () {
     then
         # remove fastq and bus files
         printf "Files preprocessed correctly\nRemove fastq and bus files to save hard drive space\nReturn in root folder\n"
-        mv $(pwd)/cr/outs/filtered_feature_bc_matrix/ out/
+        mv $(pwd)/cr/outs/raw_feature_bc_matrix/ out/
         mv $(pwd)/cr/outs/web_summary.html out/
         rm -fr cr
         rm -fr fastq/
