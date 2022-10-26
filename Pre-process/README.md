@@ -68,6 +68,8 @@ example:
 SAMN18822752,SRR14295357,SRR14295357,10xv3
 SAMN18822743,SRR14295358,<link to bam file>,10xv3
 ```
+
+The folder must contain the reference genome from CellRanger and the file with `samples.csv`
 ### Run with docker
 
 To obtain the latest version run:
