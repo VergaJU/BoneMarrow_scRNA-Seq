@@ -47,7 +47,7 @@ while IFS=, read -r patient name entry tech; do
         fi
 
         #determine_tech
-        get_counts ${entry} # get counts using kb
+        get_counts ${name} # get counts using kb
         cd ../../
     else
         if  [[ "${filetype}" == "BAM" ]] # check if entry is bam or sra
@@ -61,7 +61,7 @@ while IFS=, read -r patient name entry tech; do
         fi
 
         #determine_tech
-        get_counts ${entry} # get counts using kb
+        get_counts ${name} # get counts using kb
         cd ../../
     fi
 done < "$csv" 
