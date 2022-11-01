@@ -69,7 +69,9 @@ SAMN18822752,SRR14295357,SRR14295357,10xv3
 SAMN18822743,SRR14295358,<link to bam file>,10xv3
 ```
 
-The folder must contain the reference genome from CellRanger and the file with `samples.csv`
+The folder must contain the **reference genome** from CellRanger and the file `samples.csv`
+
+
 ### Run with docker
 
 To obtain the latest version run:
@@ -77,10 +79,10 @@ To obtain the latest version run:
 docker pull vergaju/pre-process:latest
 ```
 
-The working directory with the input file has to be mounted in the `/home/` directory of the container using the `-v`, an example of the command to run the pre-processing is:
+The working directory with the input file has to be mounted in the `/home/` directory of the container using the `-v`. The input file can have different names but has to be specified the path as `/home/samplesfile`. An example:
 
 ```
-docker container run -v $(pwd):/home/ vergaju/pre-process:latest
+docker container exec -v $(pwd):/home/ vergaju/pre-process:latest pre_processh.sh /home/samples.csv
 ```
 
 ### Run with singularity
@@ -90,10 +92,13 @@ To obtain the latest version for singularity run:
 singularity pull docker://vergaju/pre-process:latest
 ```
 
-Since singularity can directly communicate with the global environment the container can be run directly without mounting the directory inside the container and using input files with different name. An example:
+Since singularity the reference genome and index had the fixed path `/home/refdata-gex-GRCh38-2020-A`, you have to mount hte working directory as `/home` with the flag `-B`. The input file can have different names but has to be specified the path as `/home/samplesfile`. An example:
 ```
-singularity exec pre-process_singularity.sif pre_process.sh samples.csv
+singularity exec -B $(pwd):/home pre-process_singularity.sif pre_process.sh /home/samples.csv
 ```
+### NOTE:
+
+If the samples to process are numerous, is strongly suggested to use singularity. Using docker the folder `/var/` continue increasing as the container is stopeed and it can easly occupy all the storage available. 
 
 ## Steps:
 
