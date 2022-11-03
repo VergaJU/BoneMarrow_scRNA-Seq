@@ -191,6 +191,7 @@ get_counts () {
         printf "Files preprocessed correctly\nRemove fastq and bus files to save hard drive space\nReturn in root folder\n"
         mv $(pwd)/cr/outs/raw_feature_bc_matrix/ out/
         mv $(pwd)/cr/outs/web_summary.html out/
+        mv $(pwd)/cr/outs/molecule_info.h5 out/
         rm -fr cr
         rm -fr fastq/
         find . -name "*.fastq" -delete
