@@ -9,9 +9,9 @@ adata = sc.read_10x_mtx("./temp/") # load data (10x matrix obtained with seurat_
 meta = pd.read_csv("./temp/metadata.tsv", sep = "\t") # load metadata
 
 # add metadata to adata object
-adata.obs["nCount_RNA"] = meta["nCount_RNA"]
-adata.obs["nFeature_RNA"] = meta["nFeature_RNA"]
-adata.obs["percent_mt"] = meta["percent_mt"]
+for column in meta:
+    adata.obs[column] = meta[column]
+
 
 # set new filename with h5ad suffix
 filename = str(sys.argv[1])[:-3]+"h5ad"
