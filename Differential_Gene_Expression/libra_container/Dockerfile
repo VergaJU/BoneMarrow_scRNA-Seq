@@ -1,4 +1,4 @@
-FROM rocker/rstudio:4.0.5
+FROM rocker/rstudio:4.1.1
 
 RUN apt-get update --fix-missing && apt-get install -y apt-utils \
     procps \
@@ -18,8 +18,13 @@ RUN apt-get update --fix-missing && apt-get install -y apt-utils \
     graphviz
 
 
-RUN Rscript -e 'install.packages(c("rmarkdown", "tidyverse", "BiocManager", "devtools", "Seurat"), dependencies = TRUE, repos = "http://cran.us.r-project.org")'
 
+RUN Rscript -e 'install.packages(c("rmarkdown", "tidyverse", "devtools", "Seurat"), dependencies = TRUE, repos = "http://cran.us.r-project.org")'
+
+RUN R --version
+FROM bioconductor/bioconductor_docker:devel
+RUN R --version
+RUN 
 RUN Rscript -e 'BiocManager::install(c("edgeR", "DESeq2", "limma"))'
 
 Run Rscript -e 'devtools::install_github("neurorestore/Libra")'
