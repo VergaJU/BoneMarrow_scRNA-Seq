@@ -1,10 +1,11 @@
 #! /bin/bash
 
 # if using with singularity dont go in /var/
-#cd /var/ # move to mounted directory and made the files available outside the container
+cd /home/ # move to mounted directory and made the files available outside the container
 
 source /usr/local/bin/functions.sh # source the files with functions
 
+# source /usr/local/bin/scripts/functions.sh # source temp functions
 # Redirect stdout ( > ) into a named pipe ( >() ) running "tee"
 exec > >(tee -ia main.LOG)
 
@@ -13,13 +14,13 @@ source /opt/conda/etc/profile.d/conda.sh
 
 
 # path for the reference index to obtain the counts (for kb)
-ref="/lib/ref"
+#ref="/lib/ref"
 
 # reference index (for kb)
-index=$ref/index.idx
+#index=$ref/index.idx
 
 # reference transcripts to gene (for kb)
-t2g=$ref/t2g.txt
+#t2g=$ref/t2g.txt
 
 # first argument for the csv files containing the samples, format:
 # patient_ID,sample_ID,entry(url or sra entry),tech(10xv2 or 10xv3)
@@ -46,13 +47,13 @@ while IFS=, read -r patient name entry tech; do
         fi
 
         #determine_tech
-        get_counts $tech # get counts using kb
+        get_counts ${name} # get counts using kb
         cd ../../
     else
         if  [[ "${filetype}" == "BAM" ]] # check if entry is bam or sra
         then
             download_bam ${entry} # download the bam file (10x genomics)
-            cellranger ${name} # convert file in fastq files using cellranger
+            cellranger_bam ${name} # convert file in fastq files using cellranger
             check_bam # check if converted correctly
         else
             download_sra ${entry} # if entry is sra, automatically download and convert file in fastq using fasterq-dump
@@ -60,7 +61,7 @@ while IFS=, read -r patient name entry tech; do
         fi
 
         #determine_tech
-        get_counts $tech # get counts using kb
+        get_counts ${name} # get counts using kb
         cd ../../
     fi
 done < "$csv" 

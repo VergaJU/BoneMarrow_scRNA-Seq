@@ -7,7 +7,7 @@ The pre processing consist on:
 - Conversion of the files in fastq format:
     - sratoolkit fasterq-dump for sra entries
     - cellranger for bam files
-- Pseudoalignment and counts using kallisto|bustools
+- Alignment with CellRanger 7.0.1 and CellRanger Index
 - Empty droplets filtration with EmptyDrops
 - Doublets removal using scDblFinder
 
@@ -25,8 +25,8 @@ The pre processing consist on:
       G --> H
       end
       subgraph Counts
-      I([Pseudoalignment and counts with kb])
-      I --> J([Check output in CellRanger format])
+      I([Alignment with CellRanger 7.0.1])
+      I --> J([Check output])
       end
       subgraph Filter
       K([Filter empty droplet FDR 0.1])
@@ -43,13 +43,12 @@ The pre processing consist on:
 All the pipeline is organised in a Docker container to ensure reproducibility and portability of it, the container is available [here](https://hub.docker.com/repository/docker/vergaju/pre-process).
 
 The container contains the seguent softwares:
-- kallisto|bustools python wrapper (0.27.0)
 - sratoolkit (2.11.3)
-- cellranger (6.1.2)
+- cellranger (7.0.1)
 - DropletUtils (1.14.0)
 - scDblFinder (1.8.0)
 
-The index is the built-in from kallisto (from Jan 2022).
+The index is the built-in from CellRanger 2020-A (July 7, 2020) [here](https://cf.10xgenomics.com/supp/cell-exp/refdata-gex-GRCh38-2020-A.tar.gz)
 
 The input file is a csv file (samed samples.csv) organised as follow:
 - patient or experiment
@@ -69,30 +68,37 @@ example:
 SAMN18822752,SRR14295357,SRR14295357,10xv3
 SAMN18822743,SRR14295358,<link to bam file>,10xv3
 ```
+
+The folder must contain the **reference genome** from CellRanger and the file `samples.csv`
+
+
 ### Run with docker
 
 To obtain the latest version run:
 ```
-docker pull vergaju/pre-process:v8
+docker pull vergaju/pre-process:latest
 ```
 
-The working directory with the input file has to be mounted in the `/var/` directory of the container using the `-v`, an example of the command to run the pre-processing is:
+The working directory with the input file has to be mounted in the `/home/` directory of the container using the `-v`. The input file can have different names but has to be specified the path as `/home/samplesfile`. An example:
 
 ```
-docker container run -v ${PWD}:/var/ vergaju/pre-process:v8
+docker container exec -v $(pwd):/home/ vergaju/pre-process:latest pre_processh.sh /home/samples.csv
 ```
 
 ### Run with singularity
 
 To obtain the latest version for singularity run:
 ```
-singularity pull docker://vergaju/pre-process:singularity
+singularity pull docker://vergaju/pre-process:latest
 ```
 
-Since singularity can directly communicate with the global environment the container can be run directly without mounting the directory inside the container and using input files with different name. An example:
+Since singularity the reference genome and index had the fixed path `/home/refdata-gex-GRCh38-2020-A`, you have to mount hte working directory as `/home` with the flag `-B`. The input file can have different names but has to be specified the path as `/home/samplesfile`. An example:
 ```
-singularity exec pre-process_singularity.sif pre_process.sh samples.csv
+singularity exec -B $(pwd):/home pre-process_singularity.sif pre_process.sh /home/samples.csv
 ```
+### NOTE:
+
+If the samples to process are numerous, is strongly suggested to use singularity. Using docker the folder `/var/` continue increasing as the container is stopeed and it can easly occupy all the storage available. 
 
 ## Steps:
 
@@ -133,21 +139,22 @@ cache-mgr -c ~/.sratoolkit.2.11.3-ubuntu64/cache/
 
 The fastq files will be named as the entry. The log file frm fasterq-dump will be saved as `fasterq-dump.LOG`.
 
-### Pesudoalignment and counts:
+### Alignment and counts:
 
-All the fastq file will be processed with kallisto|bustools:
+All the fastq file will be processed with CellRanger:
 
 ```
-kb count --verbose -t 6 \
-    --cellranger \
-    -i $index \
-    -g $t2g \
-    -x $tech \
-    -o ./kb_out ${fastqs[@]} \
-    --overwrite |& tee -a kallisto.LOG 
+    cellranger count \
+    --id cr \
+    --transcriptome /home/refdata-gex-GRCh38-2020-A \
+    --fastqs ./fastq \
+    --sample ${1} \
+    --nosecondary \
+    --include-introns false \
+    --no-bam |& tee -a cellranger.LOG
 ```
 
-As previously the log file will be saved in `kallisto.LOG`.
+As previously the log file will be saved in `cellranger.LOG`.
 
 ### Empty/doublets filtering
 
@@ -164,6 +171,10 @@ the log file will be saved here: `filter_empty.LOG`
 Since fastq and bus files are big and occupy a lot of storage, the last step is to remove them:
 
 ```
+mv $(pwd)/cr/outs/filtered_feature_bc_matrix/ out/
+mv $(pwd)/cr/outs/web_summary.html out/
+rm -fr cr
+rm -fr fastq/
 find . -name "*.fastq" -delete
 find . -name "*.bus" -delete
 ```
@@ -177,32 +188,24 @@ The final structure of the directory for each row will be as follow:
         ├── fasterq-dump.LOG
         ├── fastq
         ├── filter_empty.LOG
-        ├── kallisto.LOG
-        └── kb_out
-              ├── 10x_version3_whitelist.txt
+        ├── cellranger.LOG
+        └── out
               ├── counts_filtered
               │   ├── barcodes.tsv
               │   ├── genes.tsv
               │   └── matrix.mtx
-              ├── counts_unfiltered
-              │   ├── cellranger
-              │   │   ├── barcodes.tsv
-              │   │   ├── genes.tsv
-              │   │   └── matrix.mtx
-              │   ├── cells_x_genes.barcodes.txt
-              │   ├── cells_x_genes.genes.txt
-              │   └── cells_x_genes.mtx
-              ├── inspect.json
-              ├── kb_info.json
-              ├── matrix.ec
-              ├── run_info.json
-              └── transcripts.txt
+              ├── filtered_feature_bc_matrix
+              │   ├── barcodes.tsv
+              │   ├── genes.tsv
+              │   └── matrix.mtx
+              └── web_summary.html
 ```
 
 - `main.LOG` Contains the LOG file from the main script ([pre_process.sh](./scripts/pre_process.sh)), one for all the entries inputted.
 - Each entry has it's log files inside the entry folder.
-- `kb_out` is the folder containing all the results from the pre-processing:
-    - `counts_unfiltered` contains the matrices from `kb count` in kallisto and CellRanger outputs
+- `kout` is the folder containing all the results from the pre-processing:
     - `counts_filtered` contains matrix, barcodes and genes filtered with EmptyDroplets and scDblFinder. These files will be considered for the next Quality Control step.
+    - `filtered_feature_bc_matrix` is the original output from CellRanger
+    - `web_summary.html` contains the summary from CellRanger
 
 
