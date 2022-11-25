@@ -26,3 +26,8 @@ Differential_Gene_Expression/libra_container/.local/
 Differential_Gene_Expression/libra_container/.config/
 Differential_Gene_Expression/libra_container/.bash_history
 Differential_Gene_Expression/libra_container/rstudio/
+rstudio/
+*.RDS
+*.Rds
+Trajectories/LOG
+Trajectories/slingshot_container/LOG
