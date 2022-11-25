@@ -36,4 +36,8 @@ RUN R --version
 
 #RUN Rscript -e 'install.packages("Seurat"), dependencies = TRUE, repos = "http://cran.us.r-project.org")'
  
-RUN Rscript -e 'BiocManager::install(c("slingshot", "SingleCellExperiment", "tradeSeq", "DelayedMatrixStats"))'
+RUN Rscript -e 'BiocManager::install(c("slingshot", "SingleCellExperiment", "tradeSeq"))'
+
+#RUN Rscript -e 'BiocManager::install(version="devel")'
+
+RUN Rscript -e 'BiocManager::install("DelayedMatrixStats")'
