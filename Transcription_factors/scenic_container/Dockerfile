@@ -42,6 +42,7 @@ RUN Rscript -e 'install.packages("doRNG")'
 
 RUN Rscript -e ' devtools::install_github("aertslab/SCopeLoomR", build_vignettes = TRUE)' 
 RUN Rscript -e ' devtools::install_github("aertslab/SCENIC")' 
+RUN Rscript -e 'BiocManager::install("SingleCellExperiment")'
 
 
 WORKDIR /rstudio

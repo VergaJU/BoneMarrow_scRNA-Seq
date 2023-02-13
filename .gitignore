@@ -41,3 +41,5 @@ Trajectories/.Rhistory
 Trajectories/trajectories.html
 Trajectories/trajectories.Rmd
 Transcription_factors/scenic_container/log
+Transcription_factors/.cache/deno/dep_analysis_cache_v1
+Transcription_factors/cisTarget_databases/
