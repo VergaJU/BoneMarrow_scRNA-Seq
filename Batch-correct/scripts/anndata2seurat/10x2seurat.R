@@ -16,5 +16,5 @@ dat <- as.Seurat(dat)
 hvg <- read.csv("./temp/hvg.csv", header = F)
 hvg <- unlist(c(hvg[1]))
 
-saveRDS(dat, "nk_cells.Rds")
+saveRDS(dat, "DE_data.Rds")
 
