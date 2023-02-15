@@ -21,6 +21,7 @@ Pre-process/pipeline_container/SAMN15892706/
 Pre-process/pipeline_container/main.LOG
 Reports/Untitled.ipynb
 Reports/Untitled1.ipynb
+
 Differential_Gene_Expression/libra_container/.Rhistory
 Differential_Gene_Expression/libra_container/.local/
 Differential_Gene_Expression/libra_container/.config/
@@ -40,6 +41,7 @@ Trajectories/slingshot_container/DelayedMatrixStats_1.20.0.tar.gz
 Trajectories/.Rhistory
 Trajectories/trajectories.html
 Trajectories/trajectories.Rmd
+
 Transcription_factors/scenic_container/log
 Transcription_factors/.cache/deno/dep_analysis_cache_v1
 Transcription_factors/cisTarget_databases/
@@ -49,3 +51,5 @@ Transcription_factors/databases/
 Transcription_factors/.ipynb_checkpoints/
 *.loom
 Transcription_factors/.Rhistory
+
+Transcription_factors/.cache/deno/dep_analysis_cache_v1
