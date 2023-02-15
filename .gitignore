@@ -47,3 +47,5 @@ Transcription_factors/Data/.Rhistory
 Transcription_factors/.venv/
 Transcription_factors/databases/
 Transcription_factors/.ipynb_checkpoints/
+*.loom
+Transcription_factors/.Rhistory
