@@ -26,7 +26,7 @@ RUN Rscript -e 'install.packages(c("rmarkdown", "markdown", "tidyverse", \
                 "remotes"), dependencies = TRUE, repos = "http://cran.us.r-project.org")'
 
 
-RUN Rscript -e 'BiocManager::install(c("SingleCellExperiment", "limma"))'
+RUN Rscript -e 'BiocManager::install(c("SingleCellExperiment", "limma", "ComplexHeatmap"))'
 
 RUN Rscript -e ' devtools::install_github("saeyslab/nichenetr", build_vignettes = TRUE)' 
 RUN Rscript -e ' devtools::install_github("saeyslab/liana", build_vignettes = TRUE)' 
