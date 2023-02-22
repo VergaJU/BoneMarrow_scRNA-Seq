@@ -30,6 +30,6 @@ RUN Rscript -e 'install.packages(c("circlize", "DiagrammeR"), dependencies = TRU
 RUN Rscript -e 'BiocManager::install(c("SingleCellExperiment", "limma", "ComplexHeatmap"))'
 
 RUN Rscript -e ' devtools::install_github("saeyslab/nichenetr", build_vignettes = FALSE)' 
-RUN Rscript -e ' devtools::install_github("saeyslab/liana", build_vignettes = FALSE)' 
+RUN Rscript -e ' devtools::install_github("saezlab/liana", build_vignettes = FALSE)' 
 
 WORKDIR /rstudio
