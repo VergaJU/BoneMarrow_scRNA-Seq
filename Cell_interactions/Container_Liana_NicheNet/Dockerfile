@@ -31,4 +31,5 @@ RUN Rscript -e 'BiocManager::install("SingleCellExperiment")'
 RUN Rscript -e ' devtools::install_github("saeyslab/nichenetr", build_vignettes = TRUE)' 
 RUN Rscript -e ' devtools::install_github("saeyslab/liana", build_vignettes = TRUE)' 
 
+RUN Rscript -e 'install.packages("circlize", dependencies = TRUE, repos = "http://cran.us.r-project.org")'
 WORKDIR /rstudio
