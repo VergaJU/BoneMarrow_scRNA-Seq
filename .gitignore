@@ -52,3 +52,6 @@ Transcription_factors/.Rhistory
 Transcription_factors/scenic_umap.txt
 *.err
 *.log
+Cell_interactions/.cache/OmnipathR/cache.json
+Cell_interactions/.config/OmnipathR/omnipathr.yml
+Cell_interactions/.Rhistory
