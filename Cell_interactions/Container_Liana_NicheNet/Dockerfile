@@ -19,11 +19,7 @@ RUN apt-get update --fix-missing && apt-get install -y apt-utils \
 
 FROM bioconductor/bioconductor_docker:devel
 
-RUN Rscript -e 'install.packages(c("rmarkdown", "markdown", "tidyverse", \
-                "pheatmap", "Seurat",\
-                "VennDiagram", "devtools",\
-                "ggpubr", "ggrepel", "cowplot",\
-                "remotes", "RcppCNPy"), dependencies = TRUE, repos = "http://cran.us.r-project.org")'
+RUN Rscript -e 'install.packages(c("rmarkdown", "markdown", "tidyverse","pheatmap", "Seurat","VennDiagram", "devtools","ggpubr", "ggrepel", "cowplot","remotes", "RcppCNPy"), dependencies = TRUE, repos = "http://cran.us.r-project.org")'
 RUN Rscript -e 'install.packages(c("circlize", "DiagrammeR"), dependencies = TRUE, repos = "http://cran.us.r-project.org")'
 
 
