@@ -1,4 +1,4 @@
-FROM rocker/rstudio:4.1
+FROM rocker/rstudio:4.2.2
 
 RUN apt-get update --fix-missing && apt-get install -y apt-utils \
     procps \
