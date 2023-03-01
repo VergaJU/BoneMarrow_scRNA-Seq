@@ -33,7 +33,7 @@ Trajectories/LOG
 Trajectories/slingshot_container/LOG
 Trajectories/Clustering.Rmd
 Trajectories/GO_clouds.Rmd
-*.csv
+
 Trajectories/rstudio_server*
 
 Trajectories/slingshot_container/DelayedMatrixStats_1.20.0.tar.gz
@@ -55,3 +55,6 @@ Transcription_factors/scenic_umap.txt
 Cell_interactions/.cache/OmnipathR/cache.json
 Cell_interactions/.config/OmnipathR/omnipathr.yml
 Cell_interactions/.Rhistory
+Trajectories/GOEA/*.csv
+
+Transcription_factors/Results/*.csv
