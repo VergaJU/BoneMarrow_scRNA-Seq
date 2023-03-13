@@ -23,7 +23,7 @@ FROM bioconductor/bioconductor_docker:devel
 RUN Rscript -e 'install.packages(c("rmarkdown", "markdown", "tidyverse", \
                 "pheatmap", "Seurat",\
                 "VennDiagram", "devtools"), dependencies = TRUE, repos = "http://cran.us.r-project.org")'
-RUN Rscript -e 'install.packages("rstan", type = "source"dependencies = TRUE, repos = "http://cran.us.r-project.org")'
+RUN Rscript -e 'install.packages("rstan", type = "source", dependencies = TRUE, repos = "http://cran.us.r-project.org")'
 
 
 RUN Rscript -e ' devtools::install_github("jaleesr/BITFAM")' 
