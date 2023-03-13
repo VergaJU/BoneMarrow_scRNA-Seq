@@ -1,0 +1,29 @@
+---
+title: "BITFAM-TF_analysis"
+author: "Jacopo Umberto Verga"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# BITFAM TF activity
+
+## NK cells in MM
+
+Load data and prepare environment:
+
+```{r}
+library(Seurat)
+library(BITFAM)
+```
+
+```{r}
+dat <- readRDS("Data/mm_nk.Rds")
+dat <- SetIdent(dat,value="new_label")
+dat
+```
+Normalize with BITFAM and run it (considering to filter genes depending on the reuluts)
+
