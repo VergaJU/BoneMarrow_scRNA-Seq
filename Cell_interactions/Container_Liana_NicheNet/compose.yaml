@@ -7,4 +7,6 @@ services:
       PASSWORD: pass
     volumes:
       - ./.rstudio_config:/home/rstudio/.config/rstudio
-      - ~/workspace:/home/rstudio/workspace
+      - ./workspace:/home/rstudio/workspace:rw
+      - ./workspace/Data:/home/rstudio/workspace/Data:rw
+      
