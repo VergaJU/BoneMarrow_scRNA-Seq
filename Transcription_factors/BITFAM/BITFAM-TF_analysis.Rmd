@@ -25,5 +25,17 @@ dat <- readRDS("Data/mm_nk.Rds")
 dat <- SetIdent(dat,value="new_label")
 dat
 ```
-Normalize with BITFAM and run it (considering to filter genes depending on the reuluts)
+Normalize with BITFAM and run it 
+
+```{r}
+data_matrix_normalized <- BITFAM_preprocess(raw_data = dat[["RNA"]]@counts
+```
+
+```{r}
+head(rownames(data_matrix_normalized), n = 5)
+```
+
+```{r}
+BITFAM_res <- BITFAM(data = data_matrix_normalized, species = "human", scATAC_obj = NA, ncores = parallel::detectCores())
+```
 
