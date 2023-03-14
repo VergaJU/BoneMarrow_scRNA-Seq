@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Cell cell interactions with liana
 
+Environment:
 ```{r}
 library(Seurat)
 library(tidyverse)
@@ -19,62 +20,89 @@ library(liana)
 library(BiocParallel)
 ```
 
-Data:
-
+Data and add corrected labels (cell types for all the cell types but the NK cells, they are labelled as exhausted. resident and others)
 ```{r}
-dat <- readRDS("Data/MM_atlas.Rds")
+dat <- readRDS("Data/MM_atlas.Rds")# scRNA-Seq atlas
 dat
-table(dat$label)
+
+## labels
+library(readr)
+all_labels_df <- read_csv("all_labels_df.csv", 
+    col_types = cols(...1 = col_skip()), 
+    trim_ws = FALSE)
+
+all_labels_df <- as.data.frame(all_labels_df)
+rownames(all_labels_df) <- all_labels_df[,"keyName"]
+all_labels_df$keyName <- NULL
+colnames(all_labels_df) <- "labels_interactions"
+all_labels_df$labels_interactions <- as.factor(all_labels_df$labels_interactions)
+
+dat <- AddMetaData(dat, all_labels_df)
+table(dat$labels_interactions)
 ```
 
+Set ident as new added labels, normalize data and prepare for analysis with liana:
 ```{r}
-dat <- SetIdent(dat, value="label")
+dat <- SetIdent(dat, value="labels_interactions")
 dat <- NormalizeData(dat)
-```
-```{r}
-multicoreParam <- MulticoreParam(workers = 10)
+gc() # clean unused memory before running liana
 ```
 
+Set multicore param (leave one core free for other jobs)
+
+```{r}
+multicoreParam <- MulticoreParam(workers = 11)
+```
+
+Run Liana with liana wrap
 ```{r}
 test_liana <- liana_wrap(dat, BPPARAM = multicoreParam)
+gc()
 ```
+
+
 ```{r}
 test_liana <- test_liana %>%
   liana_aggregate()
 ```
+
+
 ```{r fig.height=10, fig.width=10}
 test_liana %>%
   liana_dotplot(source_groups = c("Plasma cells"),
-                target_groups = c("CD56brightCD16- NK cells", "CD56dimCD16+ NK cells "),
+                target_groups = c("NK exhausted", "NK resident", "Others"),
                 ntop = 20)
 ```
 ```{r fig.height=10, fig.width=10}
 test_liana %>%
-  liana_dotplot(source_groups = c("CD56brightCD16- NK cells", "CD56dimCD16+ NK cells "),
+  liana_dotplot(source_groups = c("NK exhausted", "NK resident", "Others"),
                 target_groups = c("Plasma cells"),
                 ntop = 20)
 ```
 ```{r fig.height=10, fig.width=10}
 test_liana %>%
-  liana_dotplot(source_groups = c("CD56brightCD16- NK cells", "CD56dimCD16+ NK cells "),
-                target_groups = c("CD56brightCD16- NK cells", "CD56dimCD16+ NK cells "),
+  liana_dotplot(source_groups = c("NK exhausted", "NK resident", "Others"),
+                target_groups = c("NK exhausted", "NK resident", "Others"),
                 ntop = 20)
 ```
 
-```{r}
+```{r fig.height=10, fig.width=10}
 liana_trunc <- test_liana %>%
    # only keep interactions concordant between methods
   filter(aggregate_rank <= 0.1) # note that these pvals are already corrected
 
 heat_freq(liana_trunc)
 ```
-```{r}
+```{r fig.height=12, fig.width=12}
 p <- chord_freq(liana_trunc,
-                source_groups = c("CD56brightCD16- NK cells", "CD56dimCD16+ NK cells ","Plasma cells"),
-                target_groups = c("CD56brightCD16- NK cells", "CD56dimCD16+ NK cells ","Plasma cells"))
+                source_groups = c("NK exhausted", "NK resident", "Others","Plasma cells"),
+                target_groups = c("NK exhausted", "NK resident", "Others","Plasma cells"))
 ```
 
 ```{r}
 write.csv(liana_trunc, "all_interactions.csv")
+```
+```{r}
+gc()
 ```
 
