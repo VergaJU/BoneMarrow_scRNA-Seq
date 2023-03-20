@@ -218,9 +218,10 @@ normalize <- function(x, na.rm = TRUE) {
     return((x- min(x)) /(max(x)-min(x)))
 }
 ## Sum normalized scores and select top enriched TFs
-Z_norm <- normalize(Z)
-Z_sum <- colSums(Z_norm)
+Z_norm <-apply(Z, 2, function(x) (x-min(x))/(max(x)-min(x)))
+Z_sum <- colSums(Z_norm)/dim(Z_norm)[1]
 top_TFs <- head(sort(Z_sum,decreasing = TRUE), n=100)
+#top_TFs <- sort(Z_sum,decreasing = TRUE)
 ```
 
 Plot heatmap
@@ -235,13 +236,46 @@ library(viridis)
 
 lables <- annotation%>%
   select("new_label")
-Z_norm <- merge(Z_norm, lables, by = "row.names")
-row.names(Z_norm) <- Z_norm$Row.names
-Z_norm$Row.names <- NULL
+
+
+Z_heat <- merge(Z, lables, by = "row.names")
+row.names(Z_heat) <- Z_heat$Row.names
+Z_heat$Row.names <- NULL
+
+Z_heat_top_100 <- Z_heat %>%
+  select(c(names(top_TFs))) %>%
+  apply(2, function(x) (x-min(x))/(max(x)-min(x)))
+
+Z_heat_top_100 <- merge(Z_heat_top_100, lables, by = "row.names")
+row.names(Z_heat_top_100) <- Z_heat_top_100$Row.names
+Z_heat_top_100$Row.names <- NULL
+  
+
+lab_colors <- list(group = brewer.pal(2, "Set1"))
+names(lab_colors$group) <- unique(sort(lables$new_label))
+lab_colors <- lab_colors[1:2]
+lab_col <- Z_heat_top_100 %>%
+  select(dim(Z_heat_top_100)[2])
+
+tt <- data.table::transpose(Z_heat_top_100[,-dim(Z_heat_top_100)[2]])
+rownames(tt) <- colnames(Z_heat_top_100[,-dim(Z_heat_top_100)[2]])
+colnames(tt) <- rownames(Z_heat_top_100[,-dim(Z_heat_top_100)[2]])
+pheatmap(
+  mat               = tt,
+  color             = inferno(10),
+  border_color      = NA,
+  show_colnames     = FALSE,
+  show_rownames     = FALSE,
+  annotation_col    = lab_col,
+  annotation_colors = lab_colors,
+  drop_levels       = TRUE,
+  fontsize          = 14,
+  main              = "Default Heatmap"
+)
 ```
 
 
-
+TODO: Max enriched by cell state
 
 
 
