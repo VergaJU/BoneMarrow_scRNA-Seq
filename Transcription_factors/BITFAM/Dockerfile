@@ -29,5 +29,5 @@ RUN Rscript -e 'install.packages("rstan", type = "source", dependencies = TRUE, 
 RUN Rscript -e ' devtools::install_github("jaleesr/BITFAM")' 
 RUN Rscript -e 'BiocManager::install("SingleCellExperiment")'
 
-RUN Rscript -e 'install.packages(c("umap", "randomForest"), dependencies = TRUE, repos = "http://cran.us.r-project.org")'
+RUN Rscript -e 'install.packages(c("umap", "randomForest", "viridis"), dependencies = TRUE, repos = "http://cran.us.r-project.org")'
 WORKDIR /rstudio
