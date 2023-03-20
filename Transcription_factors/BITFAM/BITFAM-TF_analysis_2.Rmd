@@ -1,0 +1,254 @@
+---
+title: "BITFAM_downstream"
+author: "Jacopo Umberto Verga"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# BITFAM TIF avtivity - 2
+
+## Downstream analysis after [this](./BITFAM-TF_analysis.html)
+
+Prepare environment
+
+```{r}
+library(Seurat)
+library(BITFAM)
+library(readr)
+library(tidyverse)
+library(umap)
+library(randomForest)
+
+load("BITFAM_workspace.RData")
+```
+
+
+Extract TF-gene weights:
+
+```{r}
+W <- BITFAM::BITFAM_weights(BITFAM_res)
+```
+
+Extract annotation
+
+
+```{r}
+annotation = data.frame(dat@meta.data)
+head(annotation)
+```
+
+UMAP:
+
+```{r}
+Z_umap <-umap(Z)$layout
+colnames(Z_umap) <- c("UMAP_1", "UMAP_2")
+Z_umap <- merge(Z_umap, annotation, by="row.names")
+row.names(Z_umap) <- Z_umap$Row.names
+Z_umap$Row.names <- NULL
+ggplot(Z_umap, aes(UMAP_1, UMAP_2, color = new_label)) + geom_point(size=0.1)
+ggplot(Z_umap, aes(UMAP_1, UMAP_2, color = label)) + geom_point(size=0.1)
+ggplot(Z_umap, aes(UMAP_1, UMAP_2, color = batch)) + geom_point(size=0.1,show.legend = FALSE)
+
+```
+
+From the plots is possible to observe that, differently from Scenic, the TF activity is biased by the batch effect. Now let's check if it is still possible to lcuster the TF activity by the state of our NK cells:
+
+```{r}
+cell_type_df <- data.frame(Exhausted = ifelse(annotation$new_label == "NK exhausted", 1, 0),
+                           Resident = ifelse(annotation$new_label == "NK resident", 1, 0))
+
+row.names(cell_type_df) <- row.names(annotation)
+Z <- as.data.frame(Z)
+Z_rf <- merge(Z, cell_type_df, by = "row.names")
+row.names(Z_rf) <- Z_rf$Row.names
+Z_rf$Row.names <- NULL
+
+Z_exh <- Z_rf %>%
+  select(-"Resident")
+
+Z_exh$Exhausted <- factor(Z_exh$Exhausted )
+
+fit_rf <- randomForest(Exhausted~., data = Z_exh)  ## build the RF model 
+Exh_tf_top100 <- importance(fit_rf)[order(importance(fit_rf)[, 1], decreasing = T), ][1:100]  ## Based on the feature importances identify the specific TFs for Exhausted cells
+
+## Now for resident (Since the labels are one the opposite of the other, the most important TFs will be tha same so I decided to increase the number of TFs)
+Z_res <- Z_rf %>%
+  select(-"Exhausted")
+Z_res$Resident <- factor(Z_res$Resident )
+
+fit_rf <- randomForest(Resident~., data = Z_res)  ## build the RF model 
+Res_tf_top100 <- importance(fit_rf)[order(importance(fit_rf)[, 1], decreasing = T), ][1:100]  ## Based on the feature importances identify the specific TFs for Resident cells
+
+```
+
+
+```{r}
+
+## Build the inferred TF activities for selected TFs
+selected_TFs = unique(sort(names(c(Exh_tf_top100, Res_tf_top100))))
+#selected_TFs = names(Exh_tf_top10)
+len_TFs = length(selected_TFs)
+
+selected_TF_Z <- Z[, selected_TFs]
+selected_TF_Z <- apply(selected_TF_Z, 2, function(x) (x-min(x))/(max(x)-min(x)))
+label <- as.data.frame(annotation$new_label)
+label$cells <- row.names(annotation)
+colnames(label) <- c("label", "cells")
+
+
+## Build the dataframe for heatmap
+data_fr <- data.frame(cells = rep(rownames(selected_TF_Z), each = len_TFs), TF = rep(colnames(selected_TF_Z), 12560), stringsAsFactors = F)
+data_fr$activity <- as.vector(as.matrix(t(selected_TF_Z)))
+data_fr <- merge(data_fr, label, by="cells")
+data_fr$TF <- factor(data_fr$TF, levels = colnames(selected_TF_Z))
+
+## Generate heatmap figure
+ggplot(data_fr, mapping = aes(x = cells, y = TF, fill = activity)) + geom_tile() +
+  scale_fill_gradient(low = "white",    
+                      high = "red",
+                      name = "Activity") +
+  scale_y_discrete(position = "right", label = colnames(selected_TF_Z)) +
+  facet_grid(facets = ~label,
+             drop = TRUE,
+             space = "free",
+             scales = "free",
+             aes(fill=cell_type)) +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(), 
+        axis.title.y=element_blank(),
+        axis.text.y=element_text(size = 12, face="bold"), 
+        strip.text = element_text("none"))
+```
+
+# Does it make difference if I use the cell type?
+
+```{r}
+cell_type_df <- data.frame(cd56d = ifelse(annotation$label == "CD56dimCD16+ NK cells", 1, 0),
+                           cd56b = ifelse(annotation$label == "CD56brightCD16- NK cells", 1, 0),
+                           prog = ifelse(annotation$label == "NK cell progenitors", 1, 0))
+
+row.names(cell_type_df) <- row.names(annotation)
+Z <- as.data.frame(Z)
+Z_rf <- merge(Z, cell_type_df, by = "row.names")
+row.names(Z_rf) <- Z_rf$Row.names
+Z_rf$Row.names <- NULL
+
+Z_cd56d <- Z_rf %>%
+  select(-c("cd56b","prog"))
+
+Z_cd56d$cd56d <- factor(Z_cd56d$cd56d )
+
+fit_rf <- randomForest(cd56d~., data = Z_cd56d)  ## build the RF model 
+cd56d_tf_top10 <- importance(fit_rf)[order(importance(fit_rf)[, 1], decreasing = T), ][1:10]  ## Based on the feature importances identify the specific TFs for Exhausted cells
+
+## Now for resident (Since the labels are one the opposite of the other, the most important TFs will be tha same so I decided to increase the number of TFs)
+Z_cd56b <- Z_rf %>%
+  select(-c("cd56d","prog"))
+
+Z_cd56b$cd56b <- factor(Z_cd56b$cd56b )
+
+fit_rf <- randomForest(cd56b~., data = Z_cd56b)  ## build the RF model 
+cd56b_tf_top10 <- importance(fit_rf)[order(importance(fit_rf)[, 1], decreasing = T), ][1:10]  ## Based on the feature importances identify the specific TFs for Exhausted cells
+
+## Now for resident (Since the labels are one the opposite of the other, the most important TFs will be tha same so I decided to increase the number of TFs)
+Z_prog <- Z_rf %>%
+  select(-c("cd56d","cd56b"))
+
+Z_prog$prog <- factor(Z_prog$prog )
+
+fit_rf <- randomForest(prog~., data = Z_prog)  ## build the RF model 
+prog_tf_top10 <- importance(fit_rf)[order(importance(fit_rf)[, 1], decreasing = T), ][1:10]  ## Based on the feature importances identify the specific TFs for Exhausted cells
+
+```
+
+
+```{r fig.height=10, fig.width=15}
+## Build the inferred TF activities for selected TFs
+#selected_TFs = unique(sort(names(c(Exh_tf_top100, Res_tf_top100))))
+#selected_TFs = names(Exh_tf_top10)
+selected_TFs <- unique(sort(names(c(cd56b_tf_top10, cd56d_tf_top10, prog_tf_top10))))
+len_TFs = length(selected_TFs)
+
+selected_TF_Z <- Z[, selected_TFs]
+selected_TF_Z <- apply(selected_TF_Z, 2, function(x) (x-min(x))/(max(x)-min(x)))
+label <- as.data.frame(annotation$label)
+label$cells <- row.names(annotation)
+colnames(label) <- c("label", "cells")
+
+
+## Build the dataframe for heatmap
+data_fr <- data.frame(cells = rep(rownames(selected_TF_Z), each = len_TFs), TF = rep(colnames(selected_TF_Z), 12560), stringsAsFactors = F)
+data_fr$activity <- as.vector(as.matrix(t(selected_TF_Z)))
+data_fr <- merge(data_fr, label, by="cells")
+data_fr$TF <- factor(data_fr$TF, levels = colnames(selected_TF_Z))
+
+## Generate heatmap figure
+ggplot(data_fr, mapping = aes(x = cells, y = TF, fill = activity)) + geom_tile() +
+  scale_fill_gradient(low = "white",    
+                      high = "red",
+                      name = "Activity") +
+  scale_y_discrete(position = "right", label = colnames(selected_TF_Z)) +
+  facet_grid(facets = ~label,
+             drop = TRUE,
+             space = "free",
+             scales = "free",
+             aes(fill=cell_type)) +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(), 
+        axis.title.y=element_blank(),
+        axis.text.y=element_text(size = 12, face="bold"), 
+        strip.text = element_text("none"))
+```
+
+
+No specific set of TFs have been found. Probably I will check with the enrichment, without running supercised ML algorithms and decide what to do.
+
+## Normalized enrichment scores:
+
+To evaluate the enrichment of the TFs in the cell states I am going to evaluate their enrichment and select the most enriched, then run the heatmap:
+
+```{r}
+
+## normalize data
+normalize <- function(x, na.rm = TRUE) {
+    return((x- min(x)) /(max(x)-min(x)))
+}
+## Sum normalized scores and select top enriched TFs
+Z_norm <- normalize(Z)
+Z_sum <- colSums(Z_norm)
+top_TFs <- head(sort(Z_sum,decreasing = TRUE), n=100)
+```
+
+Plot heatmap
+
+```{r}
+library(pheatmap)
+library(RColorBrewer)
+library(viridis)
+```
+
+```{r}
+
+lables <- annotation%>%
+  select("new_label")
+Z_norm <- merge(Z_norm, lables, by = "row.names")
+row.names(Z_norm) <- Z_norm$Row.names
+Z_norm$Row.names <- NULL
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
