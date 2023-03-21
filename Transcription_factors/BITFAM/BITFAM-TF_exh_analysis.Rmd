@@ -1,0 +1,55 @@
+---
+title: "BITFAM-TF_exh_analysis"
+author: "Jacopo Umberto Verga"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# BITFAM TF activity
+
+## NK cells in MM
+
+Load data and prepare environment:
+
+```{r}
+library(Seurat)
+library(BITFAM)
+library(readr)
+```
+
+```{r}
+dat <- readRDS("Data/mm_nk.Rds")
+dat <- subset(dat, subset= new_label == "NK exhausted")
+dat <- SetIdent(dat,value="new_label")
+dat
+```
+Normalize with BITFAM and run it 
+
+```{r}
+data_matrix_normalized <- BITFAM_preprocess(raw_data = dat[["RNA"]]@counts)
+```
+
+```{r}
+head(rownames(data_matrix_normalized), n = 5)
+```
+
+```{r}
+BITFAM_res <- BITFAM(data = data_matrix_normalized, species = "human", scATAC_obj = NA, ncores = parallel::detectCores())
+```
+
+```{r}
+Z <- BITFAM_activities(BITFAM_res)
+W <- BITFAM::BITFAM_weights(BITFAM_res)
+
+write.csv(W, "BITFAM_exh_weights.csv")
+write.csv(Z, "BITFAM_exh_activities.csv")
+save.image("BITFAM_exh_workspace.RData")
+```
+
+
+
