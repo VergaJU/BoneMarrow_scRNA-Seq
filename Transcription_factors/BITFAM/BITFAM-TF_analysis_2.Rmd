@@ -81,7 +81,7 @@ Z_res <- Z_rf %>%
 Z_res$Resident <- factor(Z_res$Resident )
 
 fit_rf <- randomForest(Resident~., data = Z_res)  ## build the RF model 
-Res_tf_top100 <- importance(fit_rf)[order(importance(fit_rf)[, 1], decreasing = T), ][1:100]  ## Based on the feature importances identify the specific TFs for Resident cells
+Res_tf_top100 <- importance(fit_rf)[order(importance(fit_rf)[, 1], decreasing = T), ][1:10]  ## Based on the feature importances identify the specific TFs for Resident cells
 
 ```
 
@@ -218,9 +218,9 @@ normalize <- function(x, na.rm = TRUE) {
     return((x- min(x)) /(max(x)-min(x)))
 }
 ## Sum normalized scores and select top enriched TFs
-Z_norm <-apply(Z, 2, function(x) (x-min(x))/(max(x)-min(x)))
-Z_sum <- colSums(Z_norm)/dim(Z_norm)[1]
-top_TFs <- head(sort(Z_sum,decreasing = TRUE), n=100)
+#Z_norm <-apply(Z, 2, function(x) (x-min(x))/(max(x)-min(x)))
+Z_sum <- colSums(Z)/dim(Z)[1]
+top_TFs <- head(sort(Z_sum,decreasing = TRUE), n=10)
 #top_TFs <- sort(Z_sum,decreasing = TRUE)
 ```
 
@@ -260,6 +260,7 @@ lab_col <- Z_heat_top_100 %>%
 tt <- data.table::transpose(Z_heat_top_100[,-dim(Z_heat_top_100)[2]])
 rownames(tt) <- colnames(Z_heat_top_100[,-dim(Z_heat_top_100)[2]])
 colnames(tt) <- rownames(Z_heat_top_100[,-dim(Z_heat_top_100)[2]])
+
 pheatmap(
   mat               = tt,
   color             = inferno(10),
@@ -275,12 +276,57 @@ pheatmap(
 ```
 
 
-TODO: Max enriched by cell state
+NOTE: the heatmap looks fine only if I normalize the data by column:
+```{r}
+summary(Z_heat_top_100)
+```
+If I plot the raw data (already spanning from 0 to 1) I got as enriched only PTTG1 with all the other activites close to 0:
 
 
 
+```{r}
+
+lables <- annotation%>%
+  select("new_label")
 
 
+Z_heat <- merge(Z, lables, by = "row.names")
+row.names(Z_heat) <- Z_heat$Row.names
+Z_heat$Row.names <- NULL
+
+Z_heat_top_100 <- Z_heat %>%
+  select(c(names(top_TFs)))
+
+Z_heat_top_100 <- merge(Z_heat_top_100, lables, by = "row.names")
+row.names(Z_heat_top_100) <- Z_heat_top_100$Row.names
+Z_heat_top_100$Row.names <- NULL
+  
+
+lab_colors <- list(group = brewer.pal(2, "Set1"))
+names(lab_colors$group) <- unique(sort(lables$new_label))
+lab_colors <- lab_colors[1:2]
+lab_col <- Z_heat_top_100 %>%
+  select(dim(Z_heat_top_100)[2])
+
+tt <- data.table::transpose(Z_heat_top_100[,-dim(Z_heat_top_100)[2]])
+rownames(tt) <- colnames(Z_heat_top_100[,-dim(Z_heat_top_100)[2]])
+colnames(tt) <- rownames(Z_heat_top_100[,-dim(Z_heat_top_100)[2]])
+
+pheatmap(
+  mat               = tt,
+  color             = inferno(10),
+  border_color      = NA,
+  show_colnames     = FALSE,
+  show_rownames     = FALSE,
+  annotation_col    = lab_col,
+  annotation_colors = lab_colors,
+  drop_levels       = TRUE,
+  fontsize          = 14,
+  main              = "Default Heatmap"
+)
+```
+
+The results looks not correct so I decide to test again BITFAM devidin the NK cells by cell state and control other parameters.
 
 
 
