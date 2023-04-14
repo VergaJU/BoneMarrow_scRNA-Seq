@@ -1,0 +1,286 @@
+---
+title: "ALRA-analysis"
+author: "Jacopo Umberto Verga"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE, message = FALSE)
+```
+
+# ALRA interactions
+
+I run ALRA using all the BM atlas with NK cells divided in exhausted and resident. The results are:
+
+```{r cars}
+library(tidyverse)
+library(VennDiagram)
+library(stringr) 
+all_interactions <- read_csv("all_interactions.csv", col_types = cols(...1 = col_skip()))
+
+cat("Total number of interactions: ",dim(all_interactions)[1],"\nUnique Ligands: ",length(unique(sort(all_interactions$ligand.complex))),"\nUnique Receptors: ",length(unique(sort(all_interactions$receptor.complex))))
+```
+
+Focusing on NK cells we have:
+
+```{r pressure, echo=FALSE}
+exh = all_interactions %>%
+  filter(target == "NK exhausted")
+
+res = all_interactions %>%
+  filter(target == "NK resident")
+
+cat("Exhausted cells:\nTotal number of interactions: ",dim(exh)[1],"\nUnique Ligands: ",length(unique(sort(exh$ligand.complex))),"\nUnique Receptors: ",length(unique(sort(exh$receptor.complex))),"\n\n")
+cat("Resident cells:\nTotal number of interactions: ",dim(res)[1],"\nUnique Ligands: ",length(unique(sort(res$ligand.complex))),"\nUnique Receptors: ",length(unique(sort(res$receptor.complex))))
+
+```
+
+## Ligands
+
+Let's check if the lists of ligands are similar or not:
+
+```{r fig.height=4, fig.width=5}
+exh_uniq = unique(sort(exh$ligand.complex))
+res_uniq = unique(sort(res$ligand.complex))
+
+grid.newpage()
+venn_object <- venn.diagram(
+        x = list(exh_uniq, res_uniq),
+        category.names = c("Exhausted", "Resident"),
+        filename = NULL
+        )
+grid.draw(venn_object)
+
+```
+
+Most of the ligands are shared by the 2 cell types
+
+```{r}
+cat("Unique ligands for NK exhausted:\n", setdiff(exh_uniq,res_uniq), "\nUnique ligands for NK resident:\n", setdiff(res_uniq,exh_uniq))
+```
+
+### Exhausted:
+
+- [ARF6](https://www.sciencedirect.com/science/article/pii/S0006497120532825) responds to FCG3A activation
+- [CEACAM1](https://pubmed.ncbi.nlm.nih.gov/23696226/) Impair NK citolytic activity
+- [FASLG](https://doi.org/10.3389/fimmu.2022.896228) Induce apoptosis, the source of the interaction is NK exhausted as well:
+
+```{r}
+exh[exh$ligand.complex == "FASLG",][,1:4]
+```
+- HLA- interacts all with LAG3
+- LGALS3 binds LAG3 and [inhibits NK cells](https://pubmed.ncbi.nlm.nih.gov/25315772/)
+- NECTIN2 TIGIT ligand (from Megakaryocyte progenitors)
+- [NRG1](https://doi.org/10.1038/s41590-022-01394-w) destabilize immunological synapse
+- TNF inflammatory cytokine
+
+
+### Resident
+
+- LILRB4 [binds LAIR1 that is an inhibitory reeptor](https://www.genecards.org/cgi-bin/carddisp.pl?gene=LAIR1)
+
+## Receptors
+
+Let's check if the lists of receptors are similar or not:
+
+```{r fig.height=4, fig.width=5}
+exh_rec = unique(sort(exh$receptor.complex))
+res_rec = unique(sort(res$receptor.complex))
+
+grid.newpage()
+venn_object <- venn.diagram(
+        x = list(exh_rec, res_rec),
+        category.names = c("Exhausted", "Resident"),
+        filename = NULL
+        )
+grid.draw(venn_object)
+
+```
+Most of the receptors are shared by the 2 cell types
+
+```{r}
+cat("Unique receptors for NK exhausted:\n", setdiff(exh_rec,res_rec), "\nUnique receptors for NK resident:\n", setdiff(res_rec,exh_rec))
+```
+### Exhausted
+
+- LAG3 Immune checkpoint receptor
+- TIGIT Immune checkpoint receptor
+- [LILRB1](https://www.genecards.org/cgi-bin/carddisp.pl?gene=LILRB1) reduce immune response
+
+### Resident
+
+-[KIR2DL1](https://pubmed.ncbi.nlm.nih.gov/27732638/) inhibitory receptor
+- [LAIR1 that is an inhibitory receptor](https://www.genecards.org/cgi-bin/carddisp.pl?gene=LAIR1)
+
+
+## Number of interacting cells
+
+Evaluate the proportion of celltypes that interacts with our NK cells:
+
+```{r}
+exh_source <- as.data.frame(table(exh$source)/sum(table(exh$source))) %>%
+  rename(celltype = "Var1") %>%
+  mutate(condition="exh")
+res_source <- as.data.frame(table(res$source)/sum(table(res$source))) %>%
+  rename(celltype = "Var1") %>%
+  mutate(condition="res")
+
+source <- rbind(res_source,exh_source)
+
+source_plot <- source %>%
+  mutate(
+    Freq = ifelse(condition=="exh", Freq*(-1),
+                        Freq*1))%>%
+    ggplot(aes(x = celltype,y = Freq, fill=celltype)) +
+    geom_bar(stat = "identity") +
+    coord_flip() +
+  geom_hline(yintercept = 0, color="white")+
+  theme(legend.position = "none")
+
+source_plot
+
+source_dodge <- ggplot(source, aes(x=reorder(celltype,-Freq), y=Freq, fill=condition)) +
+geom_bar(stat="identity", color="black", position=position_dodge())+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+source_dodge
+```
+
+
+The proportions of cell types communicating with NK cells are similar between the conditions
+
+## Number of interacting ligands
+
+Now let's check the receptors that receive most interaction from other cell types (top 10 for each NK cell for the sake of readability)
+
+
+```{r fig.width=10}
+exh_source <- as.data.frame(table(exh$receptor.complex)/sum(table(exh$receptor.complex))) %>%
+  arrange(desc(Freq)) %>%
+  rename(receptor = "Var1") %>%
+  mutate(condition="exh")
+res_source <- as.data.frame(table(res$receptor.complex)/sum(table(res$receptor.complex))) %>%
+  arrange(desc(Freq)) %>%
+  rename(receptor = "Var1") %>%
+  mutate(condition="res")
+
+source <- rbind(res_source[1:10,],exh_source[1:10,])
+
+source_plot <- source %>%
+  mutate(
+    Freq = ifelse(condition=="exh", Freq*(-1),
+                        Freq*1))%>%
+    ggplot(aes(x = receptor,y = Freq, fill=receptor)) +
+    geom_bar(stat = "identity") +
+    coord_flip() +
+    geom_hline(yintercept = 0, color="white")+
+
+  theme(legend.position = "none")
+
+source_plot
+
+source_dodge <- ggplot(source, aes(x=reorder(receptor,-Freq), y=Freq, fill=condition)) +
+geom_bar(stat="identity", color="black", position=position_dodge())+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+source_dodge
+```
+
+- [KLRD1/CD94](https://www.jci.org/articles/view/123955) Immune checkpoint receptor
+- [KLRC1/NKG2A](https://onlinelibrary.wiley.com/doi/10.1002/(SICI)1521-4141(199801)28:01%3C264::AID-IMMU264%3E3.0.CO;2-O) Inhibitory, [KRLC2/NKG2C](https://doi.org/10.1002/(SICI)1521-4141(199809)28:09%3C2854::AID-IMMU2854%3E3.0.CO;2-W) Activating, KLRC3 miss info
+- ITGB1/2 Integrins
+- HAVCR2/TIM3 Immune checkpoint receptor
+-[CD247](https://www.jacionline.org/article/S0091-6749(15)01357-3/fulltext) Activating
+- [CD2](https://pubmed.ncbi.nlm.nih.gov/16323413/) Activating
+- [ADRB2](https://pubmed.ncbi.nlm.nih.gov/32045471/)Cell-intrinsic adrenergic signaling controls the adaptive NK cell response to viral infection 
+
+
+## Immune checkpoint receptors:
+
+Now have a look on the immune checkpoint receptors in exhausted cells:
+
+```{r}
+
+ICR = c("KLRB1|KLRC1|KLRD1|KIR2DL1|KIR2DL3|KIR3DL1|KIR3DL2|KLRG1|KIR2DL4|TIGIT|LAG3|HAVCR2|BTLA|PDCD1|LILRB1|LILRB2|LILRB3|LILRB4|LILRB5|SIGLEC7|LAIR1|CEACAM1|PILRA|CD300A|CD96")
+
+exh_ICR <- exh %>%
+  filter(grepl(ICR,receptor.complex)) %>%
+  filter(!grepl("KLRC2|KLRC3", receptor.complex))
+
+res_ICR <- res %>%
+  filter(grepl(ICR,receptor.complex)) %>%
+  filter(!grepl("KLRC2|KLRC3", receptor.complex))
+
+
+cat("Exhausted cells:\nTotal number of ICR interactions: ",dim(exh_ICR)[1],"\nUnique Ligands: ",length(unique(sort(exh_ICR$ligand.complex))),"\nUnique Receptors: ",length(unique(sort(exh_ICR$receptor.complex))),"\n\n")
+cat("Resident cells:\nTotal number of interactions: ",dim(res_ICR)[1],"\nUnique Ligands: ",length(unique(sort(res_ICR$ligand.complex))),"\nUnique Receptors: ",length(unique(sort(res_ICR$receptor.complex))))
+```
+
+
+```{r}
+exh_source <- as.data.frame(table(exh_ICR$receptor.complex)/sum(table(exh_ICR$receptor.complex))) %>%
+  arrange(desc(Freq)) %>%
+  rename(receptor = "Var1") %>%
+  mutate(condition="exh")
+res_source <- as.data.frame(table(res_ICR$receptor.complex)/sum(table(res_ICR$receptor.complex))) %>%
+  arrange(desc(Freq)) %>%
+  rename(receptor = "Var1") %>%
+  mutate(condition="res")
+
+source <- rbind(res_source,exh_source)
+
+source_plot <- source %>%
+  mutate(
+    Freq = ifelse(condition=="exh", Freq*(-1),
+                        Freq*1))%>%
+    ggplot(aes(x = receptor,y = Freq, fill=receptor)) +
+    geom_bar(stat = "identity") +
+    coord_flip() +
+    geom_hline(yintercept = 0, color="white")+
+
+  theme(legend.position = "none")
+
+source_plot
+
+source_dodge <- ggplot(source, aes(x=reorder(receptor,-Freq), y=Freq, fill=condition)) +
+geom_bar(stat="identity", color="black", position=position_dodge())+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+source_dodge
+```
+
+### Exhausted cells
+
+- LAG3 is the receptor that receive the highest number of interaction
+- TIGIT, LILRB1, and LAG3 are present only in exhausted cells, the first two with small nuber of interactions
+- HAVCR2/TIM3 is receive more interactions in exhausted than resident NK cells
+
+## Resident cells
+
+- High interactions to KIRS
+- KIR2DL3 not found in exhausted
+- LAIR one slightly activated
+
+# Conclusions
+- Most receptors and ligands are shared by NK resident and exhausted cells, this makes sense since we are considering the same cell types
+- A small fraction of Immune checkpoints (ligands and receptors) are unique for exhausted and resident NK cells
+- The cell types in the dataset communicate with NK cells with similar proportions between exhausted and resident cells
+- Focusing on the top activated receptors (by the number of receiving ligands), we found:
+  - Many ICR and activating receptors are in the top 10
+  - LAG3 is the second, and HAVCR2/TIM3 is the eighth, most activated receptor in exhausted cells 
+  - KIRs and KLRs highly activated in both the NK populations
+  - activating receptors CD247 and CD2 in both the NK population
+- Filtering the immune checkpoint receptor and their interactions we found:
+  - More interactions and ligands of the immune checkpoint receptors in exhausted than resident cells (347 vs 297 interactions and 23 vs 12 ligands)
+  - LAG3 and HAVCR2/TIM3 more activated in exhausted cells
+  - KIR2DL1 and LAIR, inhibitory receptors, present only in resident cells
+
+The result suggests some key differences in the interaction profiles between exhausted and resident NK cells. Although the cell types communicate with similar proportions between the NK populations, the number of ligands and receptors is different. Excluding the integrin ITGB1, all the most active receptors are involved in immune regulations. Most of them are immune checkpoints. LAG3, HAVCR2/TIM3 look interesting since more active in exhausted cells.KIR2DL1 in resident cells.
+
+# Future steps
+
+  - Incorporate the selected receptors in nichenet to build a regulatory network
+  - Compare the interactomes of MM and healthy samples (to be run)
