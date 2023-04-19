@@ -19,7 +19,7 @@ I run ALRA using all the BM atlas with NK cells divided in exhausted and residen
 library(tidyverse)
 library(VennDiagram)
 library(stringr) 
-all_interactions <- read_csv("all_interactions.csv", col_types = cols(...1 = col_skip()))
+all_interactions <- read_csv("all_interactions_defaults.csv", col_types = cols(...1 = col_skip()))
 
 cat("Total number of interactions: ",dim(all_interactions)[1],"\nUnique Ligands: ",length(unique(sort(all_interactions$ligand.complex))),"\nUnique Receptors: ",length(unique(sort(all_interactions$receptor.complex))))
 ```

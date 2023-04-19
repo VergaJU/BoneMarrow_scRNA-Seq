@@ -56,14 +56,14 @@ multicoreParam <- MulticoreParam(workers = 11)
 
 Run Liana with liana wrap
 ```{r}
-test_liana <- liana_wrap(dat, BPPARAM = multicoreParam)
-gc()
+test_liana <- liana_wrap(dat,resource = "all", methods= show_methods(), BPPARAM = multicoreParam)
+#test_liana <- liana_wrap(dat, BPPARAM = multicoreParam)
 ```
 
 
 ```{r}
 test_liana <- test_liana %>%
-  liana_aggregate()
+  liana_aggregate(resource = "Default")
 ```
 
 

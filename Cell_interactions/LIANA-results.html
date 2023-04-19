@@ -11,7 +11,7 @@
 
 <meta name="author" content="Jacopo Umberto Verga" />
 
-<meta name="date" content="2023-04-14" />
+<meta name="date" content="2023-04-19" />
 
 <title>ALRA-analysis</title>
 
@@ -440,7 +440,7 @@ display: none;
 
 <h1 class="title toc-ignore">ALRA-analysis</h1>
 <h4 class="author">Jacopo Umberto Verga</h4>
-<h4 class="date">2023-04-14</h4>
+<h4 class="date">2023-04-19</h4>
 
 </div>
 
@@ -452,7 +452,7 @@ and resident. The results are:</p>
 <pre class="r"><code>library(tidyverse)
 library(VennDiagram)
 library(stringr) 
-all_interactions &lt;- read_csv(&quot;all_interactions.csv&quot;, col_types = cols(...1 = col_skip()))
+all_interactions &lt;- read_csv(&quot;all_interactions_defaults.csv&quot;, col_types = cols(...1 = col_skip()))
 
 cat(&quot;Total number of interactions: &quot;,dim(all_interactions)[1],&quot;\nUnique Ligands: &quot;,length(unique(sort(all_interactions$ligand.complex))),&quot;\nUnique Receptors: &quot;,length(unique(sort(all_interactions$receptor.complex))))</code></pre>
 <pre><code>## Total number of interactions:  21594 
