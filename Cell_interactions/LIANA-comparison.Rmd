@@ -1,0 +1,487 @@
+---
+title: "ALRA-comparisons"
+author: "Jacopo Umberto Verga"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE, message = FALSE)
+```
+
+# ALRA interactions
+
+I run ALRA using all the healthy samples with NK cells divided in exhausted and resident. The results are:
+
+```{r}
+library(tidyverse)
+library(VennDiagram)
+library(stringr) 
+set.seed(1)
+mm_interactions <- read_csv("all_interactions_defaults.csv", col_types = cols(...1 = col_skip()))
+ht_interactions <- read_csv("all_healthy_interactions_default.csv", col_types = cols(...1 = col_skip()))
+
+
+exh_mm = mm_interactions %>%
+  filter(target == "NK exhausted")
+
+res_mm = mm_interactions %>%
+  filter(target == "NK resident")
+
+exh_ht = ht_interactions %>%
+  filter(target == "NK exhausted")
+
+res_ht = ht_interactions %>%
+  filter(target == "NK resident")
+```
+
+```{r }
+
+variables = c("Total number of interactions", "Different Ligands", "Different Receptors")
+
+mm = c(dim(mm_interactions)[1],
+       length(unique(sort(mm_interactions$ligand.complex))),
+       length(unique(sort(mm_interactions$receptor.complex))))
+
+mm_nk_exh = c(dim(exh_mm)[1],
+           length(unique(sort(exh_mm$ligand.complex))),
+           length(unique(sort(exh_mm$receptor.complex))))
+  
+mm_nk_res = c(dim(res_mm)[1],
+           length(unique(sort(res_mm$ligand.complex))),
+           length(unique(sort(res_mm$receptor.complex))))
+  
+df_mm <- data.frame(variables, mm, mm_nk_exh, mm_nk_res) %>%
+  mutate(nk_exh_ratio = round((mm_nk_exh/mm)*100,1)) %>%
+  mutate(nk_res_ratio = round((mm_nk_res/mm)*100,1))
+
+
+
+ht = c(dim(ht_interactions)[1],
+       length(unique(sort(ht_interactions$ligand.complex))),
+       length(unique(sort(ht_interactions$receptor.complex))))
+
+
+ht_nk_exh = c(dim(exh_ht)[1],
+           length(unique(sort(exh_ht$ligand.complex))),
+           length(unique(sort(exh_ht$receptor.complex))))
+  
+ht_nk_res = c(dim(res_ht)[1],
+           length(unique(sort(res_ht$ligand.complex))),
+           length(unique(sort(res_ht$receptor.complex))))
+
+                 
+df_ht <- data.frame(variables, ht, ht_nk_exh, ht_nk_res) %>%
+  mutate(nk_exh_ratio = round((ht_nk_exh/ht)*100,1)) %>%
+  mutate(nk_res_ratio = round((ht_nk_res/ht)*100,1))
+
+df_mm
+
+df_ht
+```
+
+Lower number of interactions, ligands and receptors found in healthy samples. For both the condition NK cells take account of ~ 10% of the interactions. Each call state (resident or exhausted) take account of $\sim \frac{1}{3}$ ligands and receptors. Now have a deeper look in the ligands.
+
+## Ligands
+
+Check the ligands ective in MM and healthy cells, then with a focus on NK cells
+
+```{r fig.height=4, fig.width=5, message=FALSE, warning=FALSE}
+#mm_interactions["Condition"] = "MM"
+#ht_interactions["Condition"] = "Healthy"
+#all_interactions = rbind(mm_interactions, ht_interactions)
+mm_ligands = unique(sort(mm_interactions$ligand.complex))
+ht_ligands = unique(sort(ht_interactions$ligand.complex))
+
+grid.newpage()
+venn_object <- venn.diagram(
+        x = list(mm_ligands, ht_ligands),
+        category.names = c("MM", "Healthy"),
+        print.mode=c("raw","percent"),
+        fill = c("green", "yellow"),
+        alpha=0.3,
+        filename = NULL,
+        disable.logging=TRUE
+        )
+grid.draw(venn_object)
+
+```
+
+56.8% of ligands are active in both healthy and MM samples, what about all the ligands in NK cells?
+
+```{r}
+mm_nk = mm_interactions %>%
+  filter(target == "NK resident" | target == "NK exhausted")
+
+mm_ligands = unique(sort(mm_nk$ligand.complex))
+
+
+ht_nk = ht_interactions %>%
+  filter(target == "NK resident" | target == "NK exhausted")
+
+ht_ligands = unique(sort(ht_nk$ligand.complex))
+
+grid.newpage()
+venn_object <- venn.diagram(
+        x = list(mm_ligands, ht_ligands),
+        category.names = c("MM", "Healthy"),
+        print.mode=c("raw","percent"),
+        fill = c("green", "yellow"),
+        alpha=0.3,
+        filename = NULL,
+        disable.logging=TRUE
+        )
+grid.draw(venn_object)
+```
+
+52.3% of ligands shared by the two conditions
+
+
+```{r}
+cat("Ligands active only in healthy NK cells:\n", setdiff(ht_ligands,mm_ligands), "\nLigands active only in MM NK cells (subset of 5):\n", sample(setdiff(mm_ligands,ht_ligands),5))
+```
+
+### Healthy:
+
+- CD34, expressed by HSCs & MPPS, binds SELL in resident and exhausted NK cells
+- IGF1, expressed by Plasma cell, binds IGF2R in NK exhausted. [Promotes cytotoxic activity](https://www.nature.com/articles/ncomms2484)
+- PTDSS1, expressed by Conventional dendritic cell 1, binds JMJD6 in resident NK cells
+- TOR2A, expressed by Conventional dendritic cell 1, binds ATP5F1B in resident NK cells
+
+### MM
+
+- ARF6, expressed by NK and dendritic cells, bind SMAP1 of NK exhausted. [responds to FCG3A activation](https://www.sciencedirect.com/science/article/pii/S0006497120532825) 
+- LTB, expressed by many cells, binds TNFRSF1A of exhausted and resident NK cells
+- ACTR2/HSPA8, expressed by many cells, binds ADRB2 of exhausted and resident NK cells. [ADRB2 deletion impair NK activity](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7144534/)
+- GZMA, expressed by many cells, binds F2R of exhausted and resident NK cells. [GZMA/F2R/JAK2/STAT1 signaling promoted apoptosis](https://www.nature.com/articles/s41419-022-04654-7) of tumor cells: 
+  - apoptosis NK cells?
+
+Now compare exhausted and resident cells between the conditions:
+
+### Exhausted:
+
+```{r}
+mm_ligands = unique(sort(exh_mm$ligand.complex))
+
+ht_ligands = unique(sort(exh_ht$ligand.complex))
+
+grid.newpage()
+venn_object <- venn.diagram(
+        x = list(mm_ligands, ht_ligands),
+        category.names = c("MM", "Healthy"),
+        print.mode=c("raw","percent"),
+        fill = c("green", "yellow"),
+        alpha=0.3,
+        filename = NULL,
+        disable.logging=TRUE
+        )
+grid.draw(venn_object)
+```
+
+A small fraction of ligands is active in healthy samples compared to MM exhausted NK cells. 
+
+
+```{r}
+set.seed(1)
+cat("Ligands active only in healthy exhausted NK cells:\n", setdiff(ht_ligands,mm_ligands), "\nLigands active only in MM exhausted NK cells (subset of 5):\n", sample(setdiff(mm_ligands,ht_ligands),5))
+```
+
+### Resident
+
+```{r}
+mm_ligands = unique(sort(res_mm$ligand.complex))
+
+ht_ligands = unique(sort(res_ht$ligand.complex))
+
+grid.newpage()
+venn_object <- venn.diagram(
+        x = list(mm_ligands, ht_ligands),
+        category.names = c("MM", "Healthy"),
+        print.mode=c("raw","percent"),
+        fill = c("green", "yellow"),
+        alpha=0.3,
+        filename = NULL,
+        disable.logging=TRUE
+        )
+grid.draw(venn_object)
+```
+
+A small fraction of ligands is active in healthy samples compared to MM exhausted NK cells. 
+
+
+```{r}
+set.seed(1)
+cat("Ligands active only in healthy NK cells:\n", setdiff(ht_ligands,mm_ligands), "\nLigands active only in MM NK cells (subset of 5):\n", sample(setdiff(mm_ligands,ht_ligands),5))
+```
+
+
+## Receptors
+
+
+
+Check the receptors active in MM and healthy cells, then with a focus on NK cells
+
+```{r fig.height=4, fig.width=5, message=FALSE, warning=FALSE}
+#mm_interactions["Condition"] = "MM"
+#ht_interactions["Condition"] = "Healthy"
+#all_interactions = rbind(mm_interactions, ht_interactions)
+mm_receptors = unique(sort(mm_interactions$receptor.complex))
+ht_receptors = unique(sort(ht_interactions$receptor.complex))
+
+grid.newpage()
+venn_object <- venn.diagram(
+        x = list(mm_receptors, ht_receptors),
+        category.names = c("MM", "Healthy"),
+        print.mode=c("raw","percent"),
+        fill = c("green", "yellow"),
+        alpha=0.3,
+        filename = NULL,
+        disable.logging=TRUE
+        )
+grid.draw(venn_object)
+
+```
+
+59.9% receptors are active in both healthy and MM samples, what about the receptors in NK cells?
+
+```{r}
+
+mm_receptors = unique(sort(mm_nk$receptor.complex))
+ht_receptors = unique(sort(ht_nk$receptor.complex))
+
+grid.newpage()
+venn_object <- venn.diagram(
+        x = list(mm_receptors, ht_receptors),
+        category.names = c("MM", "Healthy"),
+        print.mode=c("raw","percent"),
+        fill = c("green", "yellow"),
+        alpha=0.3,
+        filename = NULL,
+        disable.logging=TRUE
+        )
+grid.draw(venn_object)
+```
+
+62.2% receptors are shared by the two conditions
+
+
+```{r}
+set.seed(1)
+cat("Ligands active only in healthy NK cells:\n", setdiff(ht_receptors,mm_receptors), "\nLigands active only in MM NK cells (subset of 6):\n", sample(setdiff(mm_receptors,ht_receptors),6))
+```
+
+Now compare exhausted and resident cells between the conditions:
+
+### Exhausted:
+
+```{r}
+mm_receptors = unique(sort(exh_mm$receptor.complex))
+
+ht_receptors = unique(sort(exh_ht$receptor.complex))
+
+grid.newpage()
+venn_object <- venn.diagram(
+        x = list(mm_receptors, ht_receptors),
+        category.names = c("MM", "Healthy"),
+        print.mode=c("raw","percent"),
+        fill = c("green", "yellow"),
+        alpha=0.3,
+        filename = NULL,
+        disable.logging=TRUE
+        )
+grid.draw(venn_object)
+```
+
+61.2% of receptors are shared by exhauste NK cells between the conditions. The unique receptors in MM samples is lower compared to the number of unique ligands.
+
+
+```{r}
+set.seed(1)
+cat("Ligands active only in healthy exhausted NK cells:\n", setdiff(ht_receptors,mm_receptors), "\nLigands active only in MM exhausted NK cells (subset of 5):\n", sample(setdiff(mm_receptors,ht_receptors),5))
+```
+
+### Resident
+
+```{r}
+mm_receptors = unique(sort(res_mm$receptor.complex))
+
+ht_receptors = unique(sort(res_ht$receptor.complex))
+
+grid.newpage()
+venn_object <- venn.diagram(
+        x = list(mm_receptors, ht_receptors),
+        category.names = c("MM", "Healthy"),
+        print.mode=c("raw","percent"),
+        fill = c("green", "yellow"),
+        alpha=0.3,
+        filename = NULL,
+        disable.logging=TRUE
+        )
+grid.draw(venn_object)
+```
+
+Still 59% of shared receptors in resident NK cells. Healthy samples have 6 unique receptors:
+
+```{r}
+set.seed(1)
+cat("Ligands active only in healthy NK cells:\n", setdiff(ht_receptors,mm_receptors), "\nLigands active only in MM NK cells (subset of 6):\n", sample(setdiff(mm_receptors,ht_receptors),6))
+```
+- [CD44/CD74/CXCR4](https://doi.org/10.3389/fimmu.2020.609948): inhibits NK citotoxycity, interesting found only in healthy cells.
+- LAMP1, ligand FAM3C, important for NK cytotoxycity
+
+
+
+## Number of interacting cells
+
+Evaluate the proportion of celltypes that interacts with our NK cells in the two conditions:
+
+```{r}
+mm_source <- as.data.frame(table(mm_nk$source)/sum(table(mm_nk$source))) %>%
+  rename(celltype = "Var1") %>%
+  mutate(condition="MM")
+ht_source <- as.data.frame(table(ht_nk$source)/sum(table(ht_nk$source))) %>%
+  rename(celltype = "Var1") %>%
+  mutate(condition="healty")
+
+source <- rbind(mm_source,ht_source)
+
+source_plot <- source %>%
+  mutate(
+    Freq = ifelse(condition=="MM", Freq*(-1),
+                        Freq*1))%>%
+    ggplot(aes(x = celltype,y = Freq, fill=celltype)) +
+    geom_bar(stat = "identity") +
+    coord_flip() +
+  geom_hline(yintercept = 0, color="white")+
+  theme(legend.position = "none")
+
+source_plot
+
+source_dodge <- ggplot(source, aes(x=reorder(celltype,-Freq), y=Freq, fill=condition)) +
+geom_bar(stat="identity", color="black", position=position_dodge())+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+source_dodge
+```
+
+
+Between the celltypes, interestingly, proportionally different interacting celtype were found:
+- Conventional dendritic cells 1 interact more with healthy NK cells than MM
+- Non-classical monocytes and Megakaryocyte progenitors interact more with MM than healthy NK cells
+
+TODO: add diviosn exh-res etc
+
+
+
+## Number of interacting ligands
+
+Now let's check the receptors that receive most interaction from other cell types (top 10 for each NK cell for the sake of readability)
+
+
+```{r fig.width=10}
+exh_source <- as.data.frame(table(exh$receptor.complex)/sum(table(exh$receptor.complex))) %>%
+  arrange(desc(Freq)) %>%
+  rename(receptor = "Var1") %>%
+  mutate(condition="exh")
+res_source <- as.data.frame(table(res$receptor.complex)/sum(table(res$receptor.complex))) %>%
+  arrange(desc(Freq)) %>%
+  rename(receptor = "Var1") %>%
+  mutate(condition="res")
+
+source <- rbind(res_source[1:10,],exh_source[1:10,])
+
+source_plot <- source %>%
+  mutate(
+    Freq = ifelse(condition=="exh", Freq*(-1),
+                        Freq*1))%>%
+    ggplot(aes(x = receptor,y = Freq, fill=receptor)) +
+    geom_bar(stat = "identity") +
+    coord_flip() +
+    geom_hline(yintercept = 0, color="white")+
+
+  theme(legend.position = "none")
+
+source_plot
+
+source_dodge <- ggplot(source, aes(x=reorder(receptor,-Freq), y=Freq, fill=condition)) +
+geom_bar(stat="identity", color="black", position=position_dodge())+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+source_dodge
+```
+
+
+- KLRC2_KLRD1, [activating receptor](https://www.uniprot.org/uniprotkb/O54707/entry)
+- KIR2DL3, inhibitory KIR
+- HAVCR2/TIM3
+- KLRK1/KLRF1 activating KIR
+- KLRC1/KLRD1, INHIBITORY RECEPTOR
+- KLRC3/KLRD1
+- KLRB1, inhibitory receptor
+- CD247, activating receptor
+
+
+## Immune checkpoint receptors:
+
+Now have a look on the immune checkpoint receptors in exhausted cells:
+
+```{r}
+
+ICR = c("KLRB1|KLRC1|KLRD1|KIR2DL1|KIR2DL3|KIR3DL1|KIR3DL2|KLRG1|KIR2DL4|TIGIT|LAG3|HAVCR2|BTLA|PDCD1|LILRB1|LILRB2|LILRB3|LILRB4|LILRB5|SIGLEC7|LAIR1|CEACAM1|PILRA|CD300A|CD96")
+
+exh_ICR <- exh %>%
+  filter(grepl(ICR,receptor.complex)) %>%
+  filter(!grepl("KLRC2|KLRC3", receptor.complex))
+
+res_ICR <- res %>%
+  filter(grepl(ICR,receptor.complex)) %>%
+  filter(!grepl("KLRC2|KLRC3", receptor.complex))
+
+
+cat("Exhausted cells:\nTotal number of ICR interactions: ",dim(exh_ICR)[1],"\nUnique Ligands: ",length(unique(sort(exh_ICR$ligand.complex))),"\nUnique Receptors: ",length(unique(sort(exh_ICR$receptor.complex))),"\n\n")
+cat("Resident cells:\nTotal number of interactions: ",dim(res_ICR)[1],"\nUnique Ligands: ",length(unique(sort(res_ICR$ligand.complex))),"\nUnique Receptors: ",length(unique(sort(res_ICR$receptor.complex))))
+```
+
+
+```{r}
+exh_source <- as.data.frame(table(exh_ICR$receptor.complex)/sum(table(exh_ICR$receptor.complex))) %>%
+  arrange(desc(Freq)) %>%
+  rename(receptor = "Var1") %>%
+  mutate(condition="exh")
+res_source <- as.data.frame(table(res_ICR$receptor.complex)/sum(table(res_ICR$receptor.complex))) %>%
+  arrange(desc(Freq)) %>%
+  rename(receptor = "Var1") %>%
+  mutate(condition="res")
+
+source <- rbind(res_source,exh_source)
+
+source_plot <- source %>%
+  mutate(
+    Freq = ifelse(condition=="exh", Freq*(-1),
+                        Freq*1))%>%
+    ggplot(aes(x = receptor,y = Freq, fill=receptor)) +
+    geom_bar(stat = "identity") +
+    coord_flip() +
+    geom_hline(yintercept = 0, color="white")+
+
+  theme(legend.position = "none")
+
+source_plot
+
+source_dodge <- ggplot(source, aes(x=reorder(receptor,-Freq), y=Freq, fill=condition)) +
+geom_bar(stat="identity", color="black", position=position_dodge())+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+source_dodge
+```
+
+
+
+# Conclusions
+
+- Results show different receptors activated in exhausted and resident cell
+- less inhibitory receptors in the highly activated receptors
+- less immune checkpoints
+- lack of TIM3, and KIR2D3L in resident nk cells 
