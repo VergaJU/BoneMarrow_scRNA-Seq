@@ -720,6 +720,7 @@ source_dodge
   - Resident NK cells
 - The main ICR activated in healthy cells are KIRs/KLRs and HAVCR2/TIM3, LAIR1
 - TIGIT, LAG3, LILRB1, KLRG1, KIR2DL1, CD96/TACTILE are activated only in MM
+- Many ICR are activated in resident NK cells from MM while healthy resident NK cell lack this activation
 
 
 # Next step
