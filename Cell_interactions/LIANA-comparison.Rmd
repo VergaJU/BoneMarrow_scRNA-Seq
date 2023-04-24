@@ -84,7 +84,7 @@ df_ht
 
 Lower number of interactions, ligands and receptors found in healthy samples. For both the condition NK cells take account of ~ 10% of the interactions. Each call state (resident or exhausted) take account of $\sim \frac{1}{3}$ ligands and receptors. Now have a deeper look in the ligands.
 
-## Ligands
+# Ligands
 
 Check the ligands ective in MM and healthy cells, then with a focus on NK cells
 
@@ -109,7 +109,7 @@ grid.draw(venn_object)
 
 ```
 
-56.8% of ligands are active in both healthy and MM samples, what about all the ligands in NK cells?
+56.8% of ligands are active in both healthy and MM samples, what about the ligands in NK cells?
 
 ```{r}
 mm_nk = mm_interactions %>%
@@ -136,7 +136,7 @@ venn_object <- venn.diagram(
 grid.draw(venn_object)
 ```
 
-52.3% of ligands shared by the two conditions
+52.3% of ligands shared by the two conditions. Interestingly MM samples have 56 ligands uniquely active (43.8%)
 
 
 ```{r}
@@ -160,7 +160,7 @@ cat("Ligands active only in healthy NK cells:\n", setdiff(ht_ligands,mm_ligands)
 
 Now compare exhausted and resident cells between the conditions:
 
-### Exhausted:
+## Exhausted NK cells:
 
 ```{r}
 mm_ligands = unique(sort(exh_mm$ligand.complex))
@@ -180,7 +180,7 @@ venn_object <- venn.diagram(
 grid.draw(venn_object)
 ```
 
-A small fraction of ligands is active in healthy samples compared to MM exhausted NK cells. 
+A minority of ligands is active in healthy samples compared to MM exhausted NK cells. Also, Exhausted NK cells in MM have 62 active ligands that aren't present in healthy samples. Only 5 ligands are uniquely active in healthy samples
 
 
 ```{r}
@@ -188,7 +188,7 @@ set.seed(1)
 cat("Ligands active only in healthy exhausted NK cells:\n", setdiff(ht_ligands,mm_ligands), "\nLigands active only in MM exhausted NK cells (subset of 5):\n", sample(setdiff(mm_ligands,ht_ligands),5))
 ```
 
-### Resident
+## Resident NK cells:
 
 ```{r}
 mm_ligands = unique(sort(res_mm$ligand.complex))
@@ -208,7 +208,8 @@ venn_object <- venn.diagram(
 grid.draw(venn_object)
 ```
 
-A small fraction of ligands is active in healthy samples compared to MM exhausted NK cells. 
+A minority of ligands is active in healthy samples compared to MM resident NK cells. Also, Exhausted NK cells in MM have 39 active ligands that aren't present in healthy samples. Only 5 ligands are uniquely active in healthy samples
+
 
 
 ```{r}
@@ -217,11 +218,10 @@ cat("Ligands active only in healthy NK cells:\n", setdiff(ht_ligands,mm_ligands)
 ```
 
 
-## Receptors
+# Receptors
 
 
-
-Check the receptors active in MM and healthy cells, then with a focus on NK cells
+Check the receptors active in MM and healthy cells, then focus on NK cells
 
 ```{r fig.height=4, fig.width=5, message=FALSE, warning=FALSE}
 #mm_interactions["Condition"] = "MM"
@@ -244,7 +244,7 @@ grid.draw(venn_object)
 
 ```
 
-59.9% receptors are active in both healthy and MM samples, what about the receptors in NK cells?
+59.9% receptors are active in both healthy and MM samples. MM samples have more active receptors compared to healthy samples. What about the receptors in NK cells?
 
 ```{r}
 
@@ -264,17 +264,19 @@ venn_object <- venn.diagram(
 grid.draw(venn_object)
 ```
 
-62.2% receptors are shared by the two conditions
+62.2% receptors are shared by the two conditions. Only 6 receptors are activated uniquely in healthy samples while 28 (31.1%) are uniquely active in MM samples.
 
 
 ```{r}
 set.seed(1)
 cat("Ligands active only in healthy NK cells:\n", setdiff(ht_receptors,mm_receptors), "\nLigands active only in MM NK cells (subset of 6):\n", sample(setdiff(mm_receptors,ht_receptors),6))
 ```
+- CD44_CD74 CD74 CD74_CXCR4 complexes, inhibitory, are  active only in healthy samples.
+
 
 Now compare exhausted and resident cells between the conditions:
 
-### Exhausted:
+## Exhausted NK cells:
 
 ```{r}
 mm_receptors = unique(sort(exh_mm$receptor.complex))
@@ -294,15 +296,15 @@ venn_object <- venn.diagram(
 grid.draw(venn_object)
 ```
 
-61.2% of receptors are shared by exhauste NK cells between the conditions. The unique receptors in MM samples is lower compared to the number of unique ligands.
+61.2% of receptors are shared by exhausted NK cells between the conditions. As seen reviously, healthy samples have only 4 receptors active that aren't present in MM samples. MM have 29 receptors uniquely activated.
 
 
 ```{r}
 set.seed(1)
-cat("Ligands active only in healthy exhausted NK cells:\n", setdiff(ht_receptors,mm_receptors), "\nLigands active only in MM exhausted NK cells (subset of 5):\n", sample(setdiff(mm_receptors,ht_receptors),5))
+cat("Receptors active only in healthy exhausted NK cells:\n", setdiff(ht_receptors,mm_receptors), "\nReceptors active only in MM exhausted NK cells (subset of 4):\n", sample(setdiff(mm_receptors,ht_receptors),4))
 ```
 
-### Resident
+## Resident
 
 ```{r}
 mm_receptors = unique(sort(res_mm$receptor.complex))
@@ -326,11 +328,11 @@ Still 59% of shared receptors in resident NK cells. Healthy samples have 6 uniqu
 
 ```{r}
 set.seed(1)
-cat("Ligands active only in healthy NK cells:\n", setdiff(ht_receptors,mm_receptors), "\nLigands active only in MM NK cells (subset of 6):\n", sample(setdiff(mm_receptors,ht_receptors),6))
+cat("Receptors active only in healthy NK cells:\n", setdiff(ht_receptors,mm_receptors), "\nReceptors active only in MM NK cells (subset of 6):\n", sample(setdiff(mm_receptors,ht_receptors),6))
 ```
+
 - [CD44/CD74/CXCR4](https://doi.org/10.3389/fimmu.2020.609948): inhibits NK citotoxycity, interesting found only in healthy cells.
 - LAMP1, ligand FAM3C, important for NK cytotoxycity
-
 
 
 ## Number of interacting cells
@@ -351,11 +353,84 @@ source_plot <- source %>%
   mutate(
     Freq = ifelse(condition=="MM", Freq*(-1),
                         Freq*1))%>%
-    ggplot(aes(x = celltype,y = Freq, fill=celltype)) +
+    ggplot(aes(x = celltype,y = Freq, fill=condition)) +
     geom_bar(stat = "identity") +
     coord_flip() +
-  geom_hline(yintercept = 0, color="white")+
-  theme(legend.position = "none")
+  geom_hline(yintercept = 0, color="white")
+
+source_plot
+
+source_dodge <- ggplot(source, aes(x=reorder(celltype,-Freq), y=Freq, fill=condition)) +
+geom_bar(stat="identity", color="black", position=position_dodge())+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+source_dodge
+```
+
+Different proportions od interacting celtype were found between healthy and MM sampes:
+- Conventional dendritic cells 1 interact more with healthy NK cells than MM
+- Non-classical monocytes and Megakaryocyte progenitors interact more with MM than healthy NK cells
+
+
+## Exhausted NK cells:
+
+
+
+```{r}
+mm_source <- as.data.frame(table(exh_mm$source)/sum(table(exh_mm$source))) %>%
+  rename(celltype = "Var1") %>%
+  mutate(condition="MM")
+ht_source <- as.data.frame(table(exh_ht$source)/sum(table(exh_ht$source))) %>%
+  rename(celltype = "Var1") %>%
+  mutate(condition="healty")
+
+source <- rbind(mm_source,ht_source)
+
+source_plot <- source %>%
+  mutate(
+    Freq = ifelse(condition=="MM", Freq*(-1),
+                        Freq*1))%>%
+    ggplot(aes(x = celltype,y = Freq, fill=condition)) +
+    geom_bar(stat = "identity") +
+    coord_flip() +
+  geom_hline(yintercept = 0, color="white")
+
+source_plot
+
+source_dodge <- ggplot(source, aes(x=reorder(celltype,-Freq), y=Freq, fill=condition)) +
+geom_bar(stat="identity", color="black", position=position_dodge())+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+source_dodge
+```
+
+Some differences in the cells that interact with exhausted NK cells between MM and healthy can be highlighted:
+- proportionally, Conventional dendritic cell 2, myelocytes, non-classical monocytes, early erythroid progenitors, lymphomyeloid progenitor interacts more with exhausted cells in MM than in healthy samples
+- proportionally, CD8+ em T cell, erythro-myeloid progenitors, pre-B cells, CD8+ naive T cells, CD4+ nave T cells, CD69+PD-1+ memory CD4+ T cells, Pro-B cells interacts more with exhausted cells in healthy than in MM samples
+- More adaptive-immune cells interactions in healthy than MM
+
+## Resident NK cells: 
+
+
+```{r}
+mm_source <- as.data.frame(table(res_mm$source)/sum(table(res_mm$source))) %>%
+  rename(celltype = "Var1") %>%
+  mutate(condition="MM")
+ht_source <- as.data.frame(table(res_ht$source)/sum(table(res_ht$source))) %>%
+  rename(celltype = "Var1") %>%
+  mutate(condition="healty")
+
+source <- rbind(mm_source,ht_source)
+
+source_plot <- source %>%
+  mutate(
+    Freq = ifelse(condition=="MM", Freq*(-1),
+                        Freq*1))%>%
+    ggplot(aes(x = celltype,y = Freq, fill=condition)) +
+    geom_bar(stat = "identity") +
+    coord_flip() +
+  geom_hline(yintercept = 0, color="white") +
+  theme(legend.position = "top")
 
 source_plot
 
@@ -367,41 +442,38 @@ source_dodge
 ```
 
 
-Between the celltypes, interestingly, proportionally different interacting celtype were found:
-- Conventional dendritic cells 1 interact more with healthy NK cells than MM
-- Non-classical monocytes and Megakaryocyte progenitors interact more with MM than healthy NK cells
-
-TODO: add diviosn exh-res etc
-
+Some differences in the cells that interact with resident NK cells between MM and healthy can be highlighted:
+- non-classical monocytes, early erythroid progenitors, lymphomyeloid progenitor interacts more with exhausted cells in MM than in healthy samples
+- A hughe proportion of interaction come from Conventional dendritic cell 1 in healthy samples, in MM samples this proportion is lower
+- The main difference is in conventional dendritic cells 1
 
 
-## Number of interacting ligands
+# Number of interacting ligands
 
-Now let's check the receptors that receive most interaction from other cell types (top 10 for each NK cell for the sake of readability)
+Now let's check the receptors that receive most interactions
 
 
 ```{r fig.width=10}
-exh_source <- as.data.frame(table(exh$receptor.complex)/sum(table(exh$receptor.complex))) %>%
+mm_source <- as.data.frame(table(mm_nk$receptor.complex)/sum(table(mm_nk$receptor.complex))) %>%
   arrange(desc(Freq)) %>%
   rename(receptor = "Var1") %>%
-  mutate(condition="exh")
-res_source <- as.data.frame(table(res$receptor.complex)/sum(table(res$receptor.complex))) %>%
+  mutate(condition="MM")
+ht_source <- as.data.frame(table(ht_nk$receptor.complex)/sum(table(ht_nk$receptor.complex))) %>%
   arrange(desc(Freq)) %>%
   rename(receptor = "Var1") %>%
-  mutate(condition="res")
+  mutate(condition="healthy")
 
-source <- rbind(res_source[1:10,],exh_source[1:10,])
+source <- rbind(mm_source[1:10,],ht_source[1:10,])
 
 source_plot <- source %>%
   mutate(
-    Freq = ifelse(condition=="exh", Freq*(-1),
+    Freq = ifelse(condition=="MM", Freq*(-1),
                         Freq*1))%>%
-    ggplot(aes(x = receptor,y = Freq, fill=receptor)) +
+    ggplot(aes(x = receptor,y = Freq, fill=condition)) +
     geom_bar(stat = "identity") +
     coord_flip() +
-    geom_hline(yintercept = 0, color="white")+
-
-  theme(legend.position = "none")
+    geom_hline(yintercept = 0, color="white") +
+  theme(legend.position = "top")
 
 source_plot
 
@@ -413,60 +485,122 @@ source_dodge
 ```
 
 
-- KLRC2_KLRD1, [activating receptor](https://www.uniprot.org/uniprotkb/O54707/entry)
-- KIR2DL3, inhibitory KIR
-- HAVCR2/TIM3
-- KLRK1/KLRF1 activating KIR
-- KLRC1/KLRD1, INHIBITORY RECEPTOR
-- KLRC3/KLRD1
-- KLRB1, inhibitory receptor
-- CD247, activating receptor
+## Exhausted NK cells: 
 
 
-## Immune checkpoint receptors:
+```{r fig.width=10}
+mm_source <- as.data.frame(table(exh_mm$receptor.complex)/sum(table(exh_mm$receptor.complex))) %>%
+  arrange(desc(Freq)) %>%
+  rename(receptor = "Var1") %>%
+  mutate(condition="MM")
+ht_source <- as.data.frame(table(exh_ht$receptor.complex)/sum(table(exh_ht$receptor.complex))) %>%
+  arrange(desc(Freq)) %>%
+  rename(receptor = "Var1") %>%
+  mutate(condition="healthy")
 
-Now have a look on the immune checkpoint receptors in exhausted cells:
+source <- rbind(mm_source[1:10,],ht_source[1:10,])
+
+source_plot <- source %>%
+  mutate(
+    Freq = ifelse(condition=="MM", Freq*(-1),
+                        Freq*1))%>%
+    ggplot(aes(x = receptor,y = Freq, fill=condition)) +
+    geom_bar(stat = "identity") +
+    coord_flip() +
+    geom_hline(yintercept = 0, color="white") +
+  theme(legend.position = "top")
+
+source_plot
+
+source_dodge <- ggplot(source, aes(x=reorder(receptor,-Freq), y=Freq, fill=condition)) +
+geom_bar(stat="identity", color="black", position=position_dodge())+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+source_dodge
+```
+
+## Resident NK cells:
+
+
+```{r fig.width=10}
+mm_source <- as.data.frame(table(res_mm$receptor.complex)/sum(table(res_mm$receptor.complex))) %>%
+  arrange(desc(Freq)) %>%
+  rename(receptor = "Var1") %>%
+  mutate(condition="MM")
+ht_source <- as.data.frame(table(res_ht$receptor.complex)/sum(table(res_ht$receptor.complex))) %>%
+  arrange(desc(Freq)) %>%
+  rename(receptor = "Var1") %>%
+  mutate(condition="healthy")
+
+source <- rbind(mm_source[1:10,],ht_source[1:10,])
+
+source_plot <- source %>%
+  mutate(
+    Freq = ifelse(condition=="MM", Freq*(-1),
+                        Freq*1))%>%
+    ggplot(aes(x = receptor,y = Freq, fill=condition)) +
+    geom_bar(stat = "identity") +
+    coord_flip() +
+    geom_hline(yintercept = 0, color="white") +
+  theme(legend.position = "top")
+
+source_plot
+
+source_dodge <- ggplot(source, aes(x=reorder(receptor,-Freq), y=Freq, fill=condition)) +
+geom_bar(stat="identity", color="black", position=position_dodge())+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+source_dodge
+```
+
+
+# Immune checkpoint receptors:
+
+Now have a look on the immune checkpoint receptors:
 
 ```{r}
 
 ICR = c("KLRB1|KLRC1|KLRD1|KIR2DL1|KIR2DL3|KIR3DL1|KIR3DL2|KLRG1|KIR2DL4|TIGIT|LAG3|HAVCR2|BTLA|PDCD1|LILRB1|LILRB2|LILRB3|LILRB4|LILRB5|SIGLEC7|LAIR1|CEACAM1|PILRA|CD300A|CD96")
 
-exh_ICR <- exh %>%
+mm_ICR <- mm_nk %>%
   filter(grepl(ICR,receptor.complex)) %>%
   filter(!grepl("KLRC2|KLRC3", receptor.complex))
 
-res_ICR <- res %>%
+ht_ICR <- ht_nk %>%
   filter(grepl(ICR,receptor.complex)) %>%
   filter(!grepl("KLRC2|KLRC3", receptor.complex))
 
 
-cat("Exhausted cells:\nTotal number of ICR interactions: ",dim(exh_ICR)[1],"\nUnique Ligands: ",length(unique(sort(exh_ICR$ligand.complex))),"\nUnique Receptors: ",length(unique(sort(exh_ICR$receptor.complex))),"\n\n")
-cat("Resident cells:\nTotal number of interactions: ",dim(res_ICR)[1],"\nUnique Ligands: ",length(unique(sort(res_ICR$ligand.complex))),"\nUnique Receptors: ",length(unique(sort(res_ICR$receptor.complex))))
+cat("MM cells:\nTotal number of ICR interactions: ",dim(mm_ICR)[1],"\nUnique Ligands: ",length(unique(sort(mm_ICR$ligand.complex))),"\nUnique Receptors: ",length(unique(sort(mm_ICR$receptor.complex))),"\n\n")
+cat("Healthy cells:\nTotal number of interactions: ",dim(ht_ICR)[1],"\nUnique Ligands: ",length(unique(sort(ht_ICR$ligand.complex))),"\nUnique Receptors: ",length(unique(sort(ht_ICR$receptor.complex))))
 ```
+
+Lower intreaction, receptors and ligands related to immune checkpoint are found in healthy samples compared to MM
+
 
 
 ```{r}
-exh_source <- as.data.frame(table(exh_ICR$receptor.complex)/sum(table(exh_ICR$receptor.complex))) %>%
+exh_source <- as.data.frame(table(mm_ICR$receptor.complex)/sum(table(mm_ICR$receptor.complex))) %>%
   arrange(desc(Freq)) %>%
   rename(receptor = "Var1") %>%
-  mutate(condition="exh")
-res_source <- as.data.frame(table(res_ICR$receptor.complex)/sum(table(res_ICR$receptor.complex))) %>%
+  mutate(condition="MM")
+res_source <- as.data.frame(table(ht_ICR$receptor.complex)/sum(table(ht_ICR$receptor.complex))) %>%
   arrange(desc(Freq)) %>%
   rename(receptor = "Var1") %>%
-  mutate(condition="res")
+  mutate(condition="healthy")
 
 source <- rbind(res_source,exh_source)
 
 source_plot <- source %>%
   mutate(
-    Freq = ifelse(condition=="exh", Freq*(-1),
+    Freq = ifelse(condition=="MM", Freq*(-1),
                         Freq*1))%>%
-    ggplot(aes(x = receptor,y = Freq, fill=receptor)) +
+    ggplot(aes(x = receptor,y = Freq, fill=condition)) +
     geom_bar(stat = "identity") +
     coord_flip() +
     geom_hline(yintercept = 0, color="white")+
 
-  theme(legend.position = "none")
+  theme(legend.position = "top")
 
 source_plot
 
@@ -478,10 +612,116 @@ source_dodge
 ```
 
 
+- TIGIT, LAG3, LILRB1, KLRG1, KIR2DL1, CD96/TACTILE are activated only in MM
+- LAIR1 receive proportionally more interactions in healthy cells (and in absolute numbers):
+
+```{r}
+cat("MM:", table(mm_ICR$receptor.complex[mm_ICR$receptor.complex == "LAIR1"]), "\nHealthy:", table(ht_ICR$receptor.complex[ht_ICR$receptor.complex == "LAIR1"]))
+```
+- HAVCR2/TIM3 acivated in both  the conditions
+
+Let's focus on exhausted and resident nk cells
+
+
+## Exhausted NK cells:
+
+```{r}
+mm_exh_ICR <- mm_ICR[mm_ICR$target == "NK exhausted", ]
+ht_exh_ICR <- ht_ICR[ht_ICR$target == "NK exhausted", ]
+
+
+exh_source <- as.data.frame(table(mm_exh_ICR$receptor.complex)/sum(table(mm_exh_ICR$receptor.complex))) %>%
+  arrange(desc(Freq)) %>%
+  rename(receptor = "Var1") %>%
+  mutate(condition="MM")
+res_source <- as.data.frame(table(ht_exh_ICR$receptor.complex)/sum(table(ht_exh_ICR$receptor.complex))) %>%
+  arrange(desc(Freq)) %>%
+  rename(receptor = "Var1") %>%
+  mutate(condition="healthy")
+
+source <- rbind(res_source,exh_source)
+
+source_plot <- source %>%
+  mutate(
+    Freq = ifelse(condition=="MM", Freq*(-1),
+                        Freq*1))%>%
+    ggplot(aes(x = receptor,y = Freq, fill=condition)) +
+    geom_bar(stat = "identity") +
+    coord_flip() +
+    geom_hline(yintercept = 0, color="white")+
+
+  theme(legend.position = "top")
+
+source_plot
+
+source_dodge <- ggplot(source, aes(x=reorder(receptor,-Freq), y=Freq, fill=condition)) +
+geom_bar(stat="identity", color="black", position=position_dodge())+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+source_dodge
+```
+
+- TIGIT, LILRB1, LAG3, KLRG1, CD96/TACTILE are activated only in MM
+- LAIR1 activated only in healthy cells
+- HAVCR2/TIM3 activated in both the conditions
+
+
+## Resident NK cells:
+
+```{r}
+mm_res_ICR <- mm_ICR[mm_ICR$target == "NK resident", ]
+ht_res_ICR <- ht_ICR[ht_ICR$target == "NK resident", ]
+
+
+exh_source <- as.data.frame(table(mm_res_ICR$receptor.complex)/sum(table(mm_res_ICR$receptor.complex))) %>%
+  arrange(desc(Freq)) %>%
+  rename(receptor = "Var1") %>%
+  mutate(condition="MM")
+res_source <- as.data.frame(table(ht_res_ICR$receptor.complex)/sum(table(ht_res_ICR$receptor.complex))) %>%
+  arrange(desc(Freq)) %>%
+  rename(receptor = "Var1") %>%
+  mutate(condition="healthy")
+
+source <- rbind(res_source,exh_source)
+
+source_plot <- source %>%
+  mutate(
+    Freq = ifelse(condition=="MM", Freq*(-1),
+                        Freq*1))%>%
+    ggplot(aes(x = receptor,y = Freq, fill=condition)) +
+    geom_bar(stat = "identity") +
+    coord_flip() +
+    geom_hline(yintercept = 0, color="white")+
+
+  theme(legend.position = "top")
+
+source_plot
+
+source_dodge <- ggplot(source, aes(x=reorder(receptor,-Freq), y=Freq, fill=condition)) +
+geom_bar(stat="identity", color="black", position=position_dodge())+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+source_dodge
+```
+
+- KLRG1, KIR2DL3, KIR2DL1, HAVCR2, CD96 active in MM
+- LAIR1 more active in healthy than MM samples
+- HAVCR2/TIM3 activated only in MM
+
 
 # Conclusions
 
-- Results show different receptors activated in exhausted and resident cell
-- less inhibitory receptors in the highly activated receptors
-- less immune checkpoints
-- lack of TIM3, and KIR2D3L in resident nk cells 
+- MM samples present higher number of:
+  - Interactions
+  - Receptors
+  - Ligands
+- More ICR have been found in MM compared to healthy samples in both:
+  - Exhausted NK cells
+  - Resident NK cells
+- The main ICR activated in healthy cells are KIRs/KLRs and HAVCR2/TIM3, LAIR1
+- TIGIT, LAG3, LILRB1, KLRG1, KIR2DL1, CD96/TACTILE are activated only in MM
+
+
+# Next step
+
+Since differences in ICR were found between MM and heathy cells in both exhausted and resident NK cells, I am going to fetch all the ICR ativated in MM in NK cells (exh + res) as starting point to run NicheNet.
