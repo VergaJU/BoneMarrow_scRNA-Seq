@@ -1,0 +1,89 @@
+receptor.complex.myeloma	Info ICR:	receptor.complex.healthy	Info ICR:
+ADCY7	Associated with CD300A pathways in AML: https://www.oncotarget.com/article/24164/text/	ADCY7	
+ADGRE5	also called CD97, with it’s ligand is reported to inhibit NK cells cytotoxicity: https://doi.org/10.4049/jimmunol.149.6.2055 is overexpressed on resting NK cells: https://www.nature.com/articles/s41598-022-05259-y	ADGRE5	
+ADGRG1	inhibitory receptor in NK cells: https://doi.org/10.1016/j.celrep.2016.04.053	ADGRG1	
+ADRB2	important for NK proliferation: https://doi.org/10.1084/jem.20190549	ADRB2	
+APLP2	Interacts with MHC-I: https://www.genecards.org/cgi-bin/carddisp.pl?gene=APLP2	APLP2	
+BTN3A2	BTN3A2 stimulation decreases the NKp30-induced IFN-γ productio: https://doi.org/10.1002/eji.201141404	ATP5F1B	
+BTN3A3	NA	BTN3A2	
+C1QBP	NA	BTN3A3	
+CAP1	NA	C1QBP	
+CD2	Activating receptor: https://link.springer.com/chapter/10.1007/3-540-27743-9_5	CANX	
+CD226	DNAM-1 activating receptor: https://doi.org/10.1158/0008-5472.CAN-06-4230	CAP1	
+CD244	Activating or inhibitory, check co-expression SHP1/SHP2, EAT2 and SAP?:https://www.frontiersin.org/articles/10.3389/fimmu.2018.02809/full	CD2	
+CD247	TCR-Z	CD226	
+CD44	Activating receptor: https://doi.org/10.1182/blood.V90.2.716	CD244	
+CD47	Immune checkpoint: https://doi.org/10.1084/jem.20200839	CD247	
+CD53	Reduce cytotoxicity: https://doi.org/10.1371/journal.pone.0097844	CD44	
+CD63	NA	CD44_CD74	
+CD69	Activation marker: about:blank	CD47	
+CD7	Stimulatory receptor, However, CD7 on NK cells did not seem to transduce a lytic signal: https://doi.org/10.4049/jimmunol.152.2.517	CD53	
+CD81	Seems to be stimulatory for NK recruitment but inhibit cytotoxicity, recruitment: https://onlinelibrary.wiley.com/doi/pdf/10.1002/eji.200939234, cytotoxicity: https://doi.org/10.1084%2Fjem.20011124	CD63	
+CD8A	pro- or anti-apoptotic for activated NK cells?: https://onlinelibrary.wiley.com/doi/pdf/10.1111/j.1365-2567.2005.02235.x, https://ashpublications.org/blood/article/99/5/1706/106944/Soluble-HLA-class-I-molecules-induce-natural	CD69	
+CD96	inhibitory: https://www.nature.com/articles/ni.2850	CD7	
+CLEC2D	Inhibitory: https://www.mdpi.com/2072-6694/12/7/1755	CD74	
+CXCR4	Seems important for NK development. Only found it’s depleition in MYELOID cells enhance anti-tumour activity: https://doi.org/10.1158/2326-6066.CIR-18-0045	CD74_CXCR4	
+DIP2A	FSTL1-DIP2A knokdown enhance anti-tumour immunity: https://doi.org/10.1016/j.celrep.2018.07.043, https://doi.org/10.1016/j.canlet.2022.215690	CD81	
+F2R	Seems communication GZMA-F2R increase tumour suppression: https://www.nature.com/articles/s41419-022-04654-7	CD8A	
+FAS	High Fas = NK apoptosis: https://doi.org/10.1007/s10120-012-0210-1	CD96	
+HAVCR2	TIM3	CLEC2D	
+HCST_KLRK1	NKG2D-DAP10 Activating: https://www.nature.com/articles/ni929	CXCR4	
+HLA-DPB1	Binds LAG3, binds TNFSF, reduce NK killing and rituximab-induced NK lysis: https://doi.org/10.1182/blood.V124.21.1963.1963	DIP2A	
+IGF2R	From other NK cells with GZMB, autophagy: https://doi.org/10.4161/auto.23485: 	F2R	
+IL2RG	Ligand is ICAM-1, IL2 activated NK cells kills ICAM-1 expressing cells, regulatory mechanism? :https://doi.org/10.4049/jimmunol.173.6.3653	FAS	
+ITGA4	Integrin	HAVCR2	
+ITGA4_ITGB1	Integrin	HCST_KLRK1	
+ITGA4_ITGB7	Integrin	HLA-DPB1	
+ITGAL	Integrin, early cytotoxicity signal: https://doi.org/10.4049/jimmunol.173.6.3653	IGF2R	
+ITGAL_ITGB2	integrin	IL2RG	
+ITGAM	Maturation NK cells: https://doi.org/10.3389/fimmu.2018.01869	ITGA4	
+ITGAM_ITGB2	//	ITGA4_ITGB1	
+ITGB1	integrin	ITGA4_ITGB7	
+ITGB2	integrin	ITGAL	
+KIR2DL1	inhibitory KIR	ITGAL_ITGB2	
+KIR2DL3	inhibitory KIR	ITGAM	
+KLRB1	Inhibitory: https://www.cell.com/cell/pdf/S0092-8674(21)00065-9.pdf	ITGAM_ITGB2	
+KLRC1	NKG2-A inhibitory: https://doi.org/10.1172/jci123955	ITGB1	
+KLRC1_KLRD1	inhibitory	ITGB2	
+KLRC2	NKG2C	JMJD6	
+KLRC2_KLRD1	Activating: https://doi.org/10.1002/eji.200425210	KIR2DL1	
+KLRC3_KLRD1	Activating(?): https://core.ac.uk/download/pdf/82404434.pdf	KIR2DL3	
+KLRD1	CD94	KLRB1	
+KLRF1	Inhibitory: https://doi.org/10.1002/1521-4141(200002)30:2%3C568::AID-IMMU568%3E3.0.CO;2-Y	KLRC1	
+KLRG1	Inhibitory: https://doi.org/10.4049/jimmunol.168.6.2585	KLRC1_KLRD1	
+KLRK1	NKG”D, activating	KLRC2	
+LAG3	Inhibitory	KLRC2_KLRD1	
+LAIR1	inhibitory	KLRC3_KLRD1	
+LAMP1	Required for delivery lytic granules: https://doi.org/10.1182/blood-2012-08-453738	KLRD1	
+LILRB1	ITIM, inhibitory: https://doi.org/10.1155/2012/652130	KLRF1	
+LRP10	NA	KLRG1	
+MGRN1	NA	KLRK1	
+NCL	NA	LAG3	
+NCR1	NKp46, activating: https://doi.org/10.1309/AJCPWGG69MCZOWMM	LAIR1	
+NCR3	NKp30, activating: https://doi.org/10.1084/jem.190.10.1505	LAMP1	
+NMUR1	NA	LILRB1	
+PILRB	Activating? :https://doi.org/10.1074/jbc.275.6.4467	LRP10	
+PTGDR	NA	NCL	
+PTGER2	NA	NCR1	
+PTPRA	NA	NCR3	
+PTPRC	Needed for SLAMF7 inhibitory signal: https://doi.org/10.1128/MCB.01107-14	NMUR1	
+PTPRJ	NA	PILRB	
+RACK1	Correlated with Bortezomib resistance: https://doi.org/10.1016/j.ijbiomac.2018.10.034	PTGDR	
+RAMP1	NA	PTGER2	
+RPSA	NA	PTPRA	
+S1PR1	NA	PTPRC	
+S1PR4	NA	PTPRJ	
+S1PR5	Required for migration of NK: https://doi.org/10.1016/j.jaci.2017.11.022	RACK1	
+SELL	NA	RAMP1	
+SIGIRR	IL1R8 checkpoint: https://doi.org/10.1038/nature24293	RPSA	
+SMAP1	NA	S1PR1	
+SORL1	NA	S1PR4	
+TGFBR3	NA	S1PR5	
+TIGIT	Inhibitory	SELL	
+TNFRSF14	HVEM immunosuppression in CLL: https://www.mdpi.com/2072-6694/13/8/1766	SIGIRR	
+TNFRSF1A	NA	SMAP1	
+TNFRSF1B	NA	SORL1	
+		TGFBR3	
+		TNFRSF14	
+		TNFRSF1A	
+		TNFRSF1B	
