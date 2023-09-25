@@ -55,3 +55,6 @@ Transcription_factors/Results/adj.csv
 Transcription_factors/Results/reg.csv
 Transcription_factors/Data/.~lock.gene_lists-check_regulons.csv#
 Transcription_factors/Results/.~lock.TFs_scored_exhausted.ods#
+Cell_interactions/.cache/OmnipathR/cache.json
+Cell_interactions/omnipathr-log/omnipathr-20230731-0950.log
+Cell_interactions/.config/OmnipathR/omnipathr.yml
