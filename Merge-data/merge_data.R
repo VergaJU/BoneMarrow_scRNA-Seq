@@ -1,20 +1,10 @@
 #!/home/jacopo/anaconda3/envs/seurat_env/bin/Rscript
 
 
-library(Seurat)
-library(SingleCellExperiment)
-library(stringr)
 library(optparse)
-library(BiocParallel)
-
-multicoreParam <- MulticoreParam(workers = 6)
 
 
-# tsv file containing paths to the files to be merged and cell labels obtained with stringR
-# path/to/file path/to/labels
-#file_list <- commandArgs(trailingOnly = TRUE)[1]
-# condition to rename the merged file (string)
-#condition_name <- commandArgs(trailingOnly = TRUE)[2] 
+
 
 option_list = list(
   make_option(
@@ -22,7 +12,7 @@ option_list = list(
     action = "store",
     default = NA,
     type = 'character',
-    help = 'Path to input file, it must be a file containing the paths for the files to be merged.'
+    help = 'Path to input file, it must be a file containing the paths for the files to be merged and metadata.'
   ),
   make_option(
     c("-o", "--output_prefix"),
@@ -32,42 +22,62 @@ option_list = list(
     help = 'Prefix for naming output file.'
   ),
   make_option(
-    c("-b", "--batch_key"),
+    c("-b", "--batch_column"),
     action = "store",
     default = "batch",
     type = 'character',
-    help = 'Variable where to store the batch names.'
+    help = 'Column with batch names..'
+  ),
+  make_option(
+    c("-p", "--path_column"),
+    action = "store",
+    default = "file",
+    type = 'character',
+    help = 'Column with the paths for the files '
   )
 )
 
 opt <- parse_args(OptionParser(option_list=option_list))
 
 
+library(Seurat)
+library(SingleCellExperiment)
+library(stringr)
+library(parallel)
+library(BiocParallel)
+
+multicoreParam <- MulticoreParam(workers = detectCores())
+
 # merge data inputted
 ## input list of files and condition
 ## output: seurat and sce objects named as condition
-merge.data <- function(filepath,condition,batch){
+merge.data <- function(input_file,batch_column,path_column,output_prefix){
     # Load file paths
-    files <- read.csv(filepath, header=F)
+    df <- read.csv(input_file, header=T)
+    files <- df[path_column]
+    batches <- df[batch_column]
+    meta <- setdiff(colnames(df), c(batch_column,path_column))
     # create variables
     dats = list()
-    samples = vector()
-    cat("Merging", length(files[,1]), "files\nBatch key:", batch, "\n")
+    cat("Merging", length(files[,1]), "files\nBatch key:", batch_column, "\n")
 
     # append Rds, labels and sample names
     for(i in 1:nrow(files)){
         rds = files[i,1] # load path for rds file
+        batch=batches[i,1] # get batch
         dats[i] = readRDS(rds) # Load Rds
-        samples[i] = sub('\\..*ds$', '', str_extract(files[i,1], "[^/]+$")) # load sample name
-        dats[[i]]$batch = samples[i] # rename orig ident with sample name
+        dats[[i]]$batch = batch # add batch metadata
+        for(m in meta){
+          dats[[i]]@meta.data[m] <- df[i,m] # add rest of metadata
+        }
     }
 
     # merge datas
     # merge(first obj, y = <vector with other objects>, add.cell.ids = <vector of samples names>)
-    merged.dat = merge(dats[[1]], y = dats[2:length(dats)], add.cell.ids = samples, BPPARAM=multicoreParam)
+    merged.dat = merge(dats[[1]], y = dats[2:length(dats)], add.cell.ids = batches$batch, BPPARAM=multicoreParam)
     
     # Save seurat Object
-    saveRDS(merged.dat, file = paste0(condition, "_dataset_seurat.Rds"))
+    saveRDS(merged.dat, file = paste0(output_prefix, "_dataset_seurat.Rds"))
     # convert to sce object
     merged.dat = as.SingleCellExperiment(merged.dat)
     # fix assay name and remove logcounts
@@ -75,9 +85,9 @@ merge.data <- function(filepath,condition,batch){
     #assay(merged.dat, "counts") <- NULL
     #assay(merged.dat, "logcounts") <- NULL
     # save sce object
-    saveRDS(merged.dat, file = paste0(condition, "_dataset_sce.Rds"))
+    saveRDS(merged.dat, file = paste0(output_prefix, "_dataset_sce.Rds"))
 
 }
 
 
-merge.data(opt$input_file, opt$output_prefix, opt$batch)
+merge.data(opt$input_file, opt$batch_column, opt$path_column, opt$output_prefix)
