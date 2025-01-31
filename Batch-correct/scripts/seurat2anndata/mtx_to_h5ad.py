@@ -12,7 +12,7 @@ meta = pd.read_csv("./temp/metadata.tsv", sep = "\t") # load metadata
 for column in meta:
     adata.obs[column] = meta[column]
 
-
+print(adata)
 # set new filename with h5ad suffix
 filename = str(sys.argv[1])[:-3]+"h5ad"
 

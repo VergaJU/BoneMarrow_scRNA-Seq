@@ -2,20 +2,16 @@
 
 file=$1 # input file, seurat object.rds
 
+
+# Define paths
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"  # Get the script's directory
+R_SCRIPT="$SCRIPT_DIR/seurat_to_mtx.R"
+PY_SCRIPT="$SCRIPT_DIR/mtx_to_h5ad.py"
+
 mkdir temp # create temporary directory
 
-/home/jacopo/Documents/GitHub/BoneMarrow_scRNA-Seq/Batch-correct/scripts/seurat2anndata/seurat_to_mtx.R $file  # convert to 10x matrix
+docker run --rm -v $SCRIPT_DIR:/scripts -v $(pwd):/data -w /data vergaju/bm_r_env Rscript /scripts/seurat_to_mtx.R ${file} # convert to 10 matrix
 
-mv ./temp/genes.tsv ./temp/old.tsv # mv genes in a new file
+docker run --rm -v $SCRIPT_DIR:/scripts -v $(pwd):/data -w /data vergaju/bm_py_env python /scripts/mtx_to_h5ad.py ${file}
 
-# add the genes in a new genes.tsv file with 2 columns
-
-for f in $(cat ./temp/old.tsv);do
-    echo -e "$f\t$f" >> ./temp/genes.tsv
-    done
-
-#convert in a h5ad file
-/home/jacopo/Documents/GitHub/BoneMarrow_scRNA-Seq/Batch-correct/scripts/seurat2anndata/mtx_to_h5ad.py $file
-
-# remove temp directory
-rm -fr temp/
+rm -fr temp
