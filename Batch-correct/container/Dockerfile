@@ -1,25 +1,53 @@
-FROM ubuntu:20.04
+FROM nvidia/cuda:12.2.2-devel-ubuntu22.04
+
 # Basic libraries
-RUN apt-get update --fix-missing && apt-get install -y apt-utils procps wget bzip2 ca-certificates libglib2.0-0 libxext6 libsm6 libxrender1 git mercurial subversion build-essential libcurl4-gnutls-dev libssl-dev libxml2-dev libhdf5-dev graphviz
 
-# Miniconda
-ENV PATH /opt/conda/bin:$PATH
-RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py38_4.12.0-Linux-x86_64.sh -O ~/miniconda.sh && \
-    /bin/bash ~/miniconda.sh -b -p /opt/conda && \
-    rm ~/miniconda.sh && \
-    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-    echo "conda activate base" >> ~/.bashrc
+RUN apt-get update --fix-missing && apt-get install -y apt-utils\
+    procps\
+    wget\
+    bzip2\
+    ca-certificates\
+    libglib2.0-0\
+    libxext6\
+    libsm6\
+    libxrender1\
+    git\
+    mercurial\
+    subversion\
+    build-essential\
+    libcurl4-gnutls-dev\
+    libssl-dev\
+    libxml2-dev\
+    libhdf5-dev\
+    graphviz
+
+RUN apt -y install software-properties-common
+RUN add-apt-repository ppa:deadsnakes/ppa
+
+ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
+
+RUN apt-get update && \
+    apt-get install -y tzdata && \
+    ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata
 
 
-# Install python and required libraries
-ENV PYTHON_VERSION=3.8.10
-RUN conda install python=${PYTHON_VERSION}
-ADD requirements.txt .
-RUN pip3 install -r requirements.txt
+RUN apt -y install python3.9
+RUN apt update && apt -y install curl
+RUN curl -o get-pip.py "https://bootstrap.pypa.io/get-pip.py"
+# RUN ln -sf /usr/bin/python3.9 /usr/bin/python3
 
-# Install R packages
+RUN python3 get-pip.py
+RUN pip install scanpy scvi-tools matplotlib seaborn torch
+RUN pip install leidenalg 
+RUN pip install scikit-misc
+RUN pip install igraph
+RUN pip install scib_metrics
+RUN pip install optuna
+RUN pip install plotly kaleido
 
-RUN Rscript -e 'install.packages(c("tidyverse", "scPOP", "optparse"))'
-
-RUN chmod -R o+rX /opt/conda/lib/python3.8/site-packages/*
+RUN pip install scib
+WORKDIR /usr/local/lib/python3.10/dist-packages/scib/knn_graph
+RUN  g++ -std=c++11 -O3 knn_graph.cpp -o knn_graph.o
+WORKDIR /
