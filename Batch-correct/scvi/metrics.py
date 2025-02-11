@@ -56,14 +56,8 @@ save_dir = tempfile.TemporaryDirectory()
 hvg=4000
 cpus=os.cpu_count()
 
-def get_params(params):
-    with open(params) as f:
-        data = json.load(f)
-    return data
 
 ### define functions
-# preprocessing
-## adata_pp is processed
 def preprocessing(adata, high_variable_genes)->sc.AnnData:
     """
     Preprocesses the AnnData object for scVI training.
@@ -92,8 +86,7 @@ def preprocessing(adata, high_variable_genes)->sc.AnnData:
     return adata
 
 
-# compile reduced dimensions
-def compile_red_dim(adata, model=None):
+def compile_red_dim(adata, model=None, resolution=None):
     """
     Compiles the reduced dimensions of the AnnData object.
     Parameters
@@ -118,16 +111,17 @@ def compile_red_dim(adata, model=None):
     else:
         adata_tmp.obsm['X_pca'] = model.get_latent_representation() # if latendt dimensions from a model, add them as X_pca
     sc.pp.neighbors(adata_tmp, use_rep='X_pca')
-    resolution=scib.metrics.cluster_optimal_resolution(adata_tmp, label_key=args.label_key, cluster_key='opt_cluser')[0]# get optimal resolution
-    # resolution=.6
+    if resolution == None:
+        resolution=scib.metrics.cluster_optimal_resolution(adata_tmp, label_key=args.label_key, cluster_key='opt_cluser')[0]# get optimal resolution
+    else:
+        pass
     sc.tl.leiden(adata_tmp,resolution=resolution)
     sc.tl.umap(adata_tmp, min_dist=0.3, copy=False)
     return adata_tmp
 
 
 
-### define metrics
-def evaluate_model(adata,adata_int,label_key,batch_key):
+def evaluate_model(adata_int,label_key,batch_key):
     """
     Evaluate the model
     Parameters
@@ -178,10 +172,6 @@ def evaluate_model(adata,adata_int,label_key,batch_key):
                                                     label_key=label_key,
                                                     embed='X_umap',
                                                     verbose=False)
-    ### combine biological scores
-    bio_scores=np.mean([ari,clisi,isolated_labels_asw,nmi,silouhette])
-    ### combine batch correction scores
-    batch_scores=np.mean([graph_connectivity,ilisi,silouhette_batch])
     metrics={'ari':ari,
             'clisi':clisi,
             'isolated_labels_asw':isolated_labels_asw,
@@ -189,7 +179,8 @@ def evaluate_model(adata,adata_int,label_key,batch_key):
             'silouhette':silouhette,
             'graph_connectivity':graph_connectivity,
             'ilisi':ilisi,
-            'silouhette_batch':silouhette_batch}               
+            'silouhette_batch':silouhette_batch}
+    metrics={k:float(v) for k,v in metrics.items()}
     return metrics
 
 
@@ -214,13 +205,12 @@ def reconstruction_error(model, adata):
     mae=np.mean(np.abs(adata.X-pred))
     features_errors=np.mean(np.abs(adata.X-pred),axis=0)
     obs_errors=np.mean(np.abs(adata.X-pred),axis=1)
-    errors={'mse':mse,
-            'rmse':rmse,
-            'mae':mae,
-            'features_errors':features_errors,
-            'obs_errors':obs_errors}
+    errors={'mse':float(mse),
+            'rmse':float(rmse),
+            'mae':float(mae),
+            'features_errors':features_errors.astype(float).tolist()[0],
+            'obs_errors':obs_errors.flatten().astype(float).tolist()[0]}
     return errors
-
 
 
 if __name__ == "__main__":
@@ -228,16 +218,16 @@ if __name__ == "__main__":
     adata=preprocessing(adata,hvg) # preprocess data
     model=scvi.model.SCVI.load('results/BM_dataset_scvi_model/',adata) # initialize model
     adata_int=compile_red_dim(adata,model=model)
-    scvi_metrics = evaluate_model(adata,adata_int,args.label_key,args.batch_key)
+    scvi_metrics = evaluate_model(adata_int,args.label_key,args.batch_key)
     scvi_errors=reconstruction_error(model,adata) # get reconstruction error
     with open(f"{args.output_prefix}_scvi_metrics.json", "w") as f:
         json.dump(scvi_metrics, f) # save
     with open(f"{args.output_prefix}_scvi_errors.json", "w") as f:
         json.dump(scvi_errors, f)
-        
+    adata_int.write(f"{output_prefix}_scvi_corrected.h5ad") # save corrected data
     scanvi_model=scvi.model.SCANVI.load('results/BM_dataset_scanvi_model/',adata) # initialize model
-    adata_int=compile_red_dim(adata,model=scanvi_model)
-    scanvi_metrics = evaluate_model(adata,adata_int,args.label_key,args.batch_key)
+    adata_scanvi=compile_red_dim(adata,model=scanvi_model)
+    scanvi_metrics = evaluate_model(adata_scanvi,args.label_key,args.batch_key)
     scanvi_errors=reconstruction_error(scanvi_model,adata) # get reconstruction error
     # save scores and results as json
 
@@ -245,4 +235,11 @@ if __name__ == "__main__":
         json.dump(scanvi_metrics, f)
     with open(f"{args.output_prefix}_scanvi_errors.json", "w") as f:
         json.dump(scanvi_errors, f)
+    adata_scanvi.write(f"{output_prefix}_scanvi_corrected.h5ad") # save corrected data
+
+    adata_og=compile_red_dim(adata)
+    og_metrics = evaluate_model(adata_og,args.label_key,args.batch_key)
+    with open(f"{args.output_prefix}_og_metrics.json", "w") as f:
+        json.dump(og_metrics, f)
+    adata_og.write(f"{output_prefix}_og.h5ad") # save corrected data
 
